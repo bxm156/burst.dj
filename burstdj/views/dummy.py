@@ -3,13 +3,11 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-from .models import (
-    DBSession,
-    MyModel,
-    )
+from burstdj.models import DBSession
+from burstdj.models.mymodel import MyModel
 
 
-@view_config(route_name='home', renderer='templates/index.pt')
+@view_config(route_name='home', renderer='../templates/index.pt')
 def my_view(request):
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()

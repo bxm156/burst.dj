@@ -4,4 +4,9 @@
 *.sqlite
 bower_components/
 .sass-cache/
+burstdj/static
 burstdj/static/css/
+.idea/
+burst.dj.sqlite
+node_modules/
+venv/
