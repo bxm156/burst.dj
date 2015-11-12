@@ -1,6 +1,11 @@
 @import "settings";
 @import "foundation";
 
+$yelp_red: #af0606;
+
+body {
+    background-color: $yelp_red;
+}
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",
