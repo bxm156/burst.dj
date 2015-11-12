@@ -1,1 +1,3 @@
 *.egg-info/
+bower_components/
+.sass-cache/
