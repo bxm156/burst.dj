@@ -6,7 +6,8 @@
     "grunt-cli": "*",
     "grunt": "*",
     "grunt-contrib-cssmin": "*",
-    "grunt-contrib-less": "*",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-sass": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-bower": "*"
   }
 }

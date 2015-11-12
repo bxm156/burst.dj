@@ -3,6 +3,7 @@
 *.egg-info/
 bower_components/
 .sass-cache/
+burstdj/static
 burstdj/static/css/
 .idea/
 burst.dj.sqlite
