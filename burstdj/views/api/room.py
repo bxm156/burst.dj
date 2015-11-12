@@ -8,7 +8,11 @@ from cornice import Service
 
 
 
-room_activity = Service(name='room_activity', path='/room/{room_id}/activity')
+room_activity = Service(
+    name='room_activity',
+    path='/room/{room_id}/activity',
+    permission='authenticated',
+)
 
 _USERS = defaultdict(dict)
 
