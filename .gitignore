@@ -1,3 +1,7 @@
-*.egg-info/
 *.pyc
+*.pyo
+*.egg-info/
 *.sqlite
+bower_components/
+.sass-cache/
+burstdj/static/css/
