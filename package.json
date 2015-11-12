@@ -1,0 +1,13 @@
+{
+  "name": "burst.dj",
+  "version": "0.0.1",
+  "devDependencies": {
+    "bower": "*",
+    "grunt-cli": "*",
+    "grunt": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-sass": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-bower": "*"
+  }
+}

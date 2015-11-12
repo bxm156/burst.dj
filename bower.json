@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "private": "true",
   "dependencies": {
-    "foundation": "zurb/bower-foundation"
+    "foundation": "zurb/bower-foundation",
+    "requirejs": "~2.1.20",
+    "angular": "~1.4.7",
+    "angular-resource": "~1.4.7",
+    "underscore": "~1.8.3",
+    "jquery-bridget": "~1.1.0"
   }
 }

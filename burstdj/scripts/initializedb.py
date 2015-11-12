@@ -11,12 +11,8 @@ from pyramid.paster import (
 
 from pyramid.scripts.common import parse_vars
 
-from ..models import (
-    DBSession,
-    MyModel,
-    Base,
-    )
-
+from burstdj.models import DBSession, Base
+from burstdj.models.mymodel import MyModel
 
 def usage(argv):
     cmd = os.path.basename(argv[0])

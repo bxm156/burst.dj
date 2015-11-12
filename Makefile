@@ -7,7 +7,7 @@ bower:
 	bower update
 
 templates: bower
-	bundle exec compass compile
+	grunt
 
 watch: bower
 	bundle exec compass watch
