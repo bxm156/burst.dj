@@ -6,7 +6,6 @@ Pygments==2.0.2
 SQLAlchemy==1.0.9
 WebOb==1.5.1
 argparse==1.4.0
--e git+git@github.com:bryanmarty/burst.dj.git@e8af8a34ba190fdc8c21dba8ec25039a9cb28e4d#egg=burst.dj-master
 linecache2==1.0.0
 ordereddict==1.1
 pyramid==1.5.7
