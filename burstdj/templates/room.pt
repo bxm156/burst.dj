@@ -21,10 +21,16 @@
           width: '640',
 
           // TODO: Fetch 'videoId' dynamically 
-          videoId: 'I2bBZvSPpOo',
+          videoId: 'j9MfuWSQoWc',
 
           // TODO: Make 'start' dynamically load the starting time
-          playerVars: {'controls': 0, 'start': 0, 'fs': 0},
+          // controls=0 disables player controls
+          // fs=0 disables fullscreen
+          // iv_load_policy=3 disables video annotations
+          // rel=0 disables showing related videos at the end
+          // modestbranding=1 makes the youtube logo smaller
+          // showinfo=0 hides the info at the top of the video
+          playerVars: {'controls': 0, 'start': 0, 'fs': 0, 'iv_load_policy': 3, 'rel': 0, 'modestbranding': 1, 'showinfo': 0},
           events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange

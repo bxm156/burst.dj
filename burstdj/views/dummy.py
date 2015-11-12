@@ -3,10 +3,8 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-from burstdj.models import (
-    DBSession,
-    MyModel,
-    )
+from burstdj.models import DBSession
+from burstdj.models.mymodel import MyModel
 
 
 @view_config(route_name='home', renderer='../templates/index.pt')
