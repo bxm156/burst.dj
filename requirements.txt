@@ -7,6 +7,7 @@ SQLAlchemy==1.0.9
 WebOb==1.5.1
 argparse==1.4.0
 linecache2==1.0.0
+nodeenv==0.13.6
 ordereddict==1.1
 pyramid==1.5.7
 pyramid-chameleon==0.3
@@ -25,4 +26,3 @@ wsgiref==0.1.2
 zope.deprecation==4.1.2
 zope.interface==4.1.3
 zope.sqlalchemy==0.7.6
-cornice==1.1.0
