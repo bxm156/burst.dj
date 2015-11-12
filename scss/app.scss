@@ -1,10 +1,23 @@
+@import url(https://fonts.googleapis.com/css?family=Josefin+Slab:400,700,400italic,100,100italic,300,300italic,600,600italic,700italic);
 @import "settings";
+$row-width: 100%;
 @import "foundation";
 
 $yelp_red: #af0606;
 
 body {
     background-color: $yelp_red;
+}
+
+#header>h1 {
+    font-family: 'Josefin Slab', serif;
+    color: $white;
+    font-size: 4em;
+    font-weight: 300;
+
+}
+#header>h1>em {
+    font-weight: 700;
 }
 // Or selectively include components
 // @import
