@@ -1,12 +1,15 @@
-.PHONY: clean templates watch all
+.PHONY: clean bower templates watch all
 
 all: templates
 	pserve development.ini --reload
 
-templates:
+bower:
+	bower update
+
+templates: bower
 	bundle exec compass compile
 
-watch:
+watch: bower
 	bundle exec compass watch
 
 clean:
