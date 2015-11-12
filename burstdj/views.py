@@ -18,6 +18,10 @@ def my_view(request):
     return {'one': one, 'project': 'burst.dj'}
 
 
+@view_config(route_name='room', renderer='templates/room.pt')
+def room(request):
+    return {}
+
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
 might be caused by one of the following things:
