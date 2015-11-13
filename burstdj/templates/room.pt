@@ -35,6 +35,7 @@
                 <div class="small-3 columns">
                     <div id="playlists" ng-controller="PlaylistController" ng-cloak>
                         <h3>{{ greeting }}</h3>
+                        <h4 class="active-playlist" ng-if="active_playlist">Active: {{ active_playlist.name }}</h4>
                         <form>
                             <div class="row">
                                 <div class="small-12 columns">

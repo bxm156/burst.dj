@@ -25,9 +25,9 @@ def set_user_active_playlist(user_id, playlist_id):
         user = session.query(User).filter(User.id==user_id).one()
         playlist = _get_playlist(session, user_id, playlist_id)
         if playlist is None:
-            return False
+            return None
         user.active_playlist_id = playlist_id
-    return True
+    return playlist
 
 
 def _get_user_active_playlist_id(session, user_id):

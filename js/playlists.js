@@ -20,17 +20,25 @@
             return $resource('/api/user/:userId/playlist/:playlistId/add_track');
         }).factory('MusicSearchFactory', function($resource) {
             return $resource('/api/music_search/:query');
+        }).factory('ActivePlaylistFactory', function($resource) {
+            return $resource('/api/user/:userId/active_playlist');
         }).controller('PlaylistController', [
             '$scope',
             'CurrentUserFactory',
             'PlaylistFactory',
+            'ActivePlaylistFactory',
             'TrackFactory',
             'MusicSearchFactory',
-            function($scope, CurrentUserFactory, PlaylistFactory, TrackFactory, MusicSearchFactory) {
+            function($scope, CurrentUserFactory, PlaylistFactory, ActivePlaylistFactory, TrackFactory, MusicSearchFactory) {
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
                     $scope.greeting = user.name + "'s playlists";
                     $scope.playlists = PlaylistFactory.query({userId:user.id});
+                    ActivePlaylistFactory.get({
+                        userId: $scope.user.id,
+                    },  function($playlist) {
+                        $scope.active_playlist = $playlist  
+                    });
                 });
                 $scope.create = function($playlist) {
                     PlaylistFactory.save({
@@ -49,7 +57,13 @@
                     //
                 };
                 $scope.activate = function($playlist) {
-
+                    ActivePlaylistFactory.save({
+                        userId: $scope.user.id,
+                    }, {
+                        playlist_id: $playlist.id
+                    }, function($playlist) {
+                        $scope.active_playlist = $playlist  
+                    });
                 };
                 $scope.addToPlaylist = function($playlist, $video_id) {
                     TrackFactory.save({
@@ -58,7 +72,6 @@
                     }, {
                         provider_track_id: $video_id,
                         provider: 'youtube',
-                        name: 'test'
                     });
                 };
                 $scope.search = function($query) {
