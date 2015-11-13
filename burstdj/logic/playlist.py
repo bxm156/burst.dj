@@ -6,7 +6,22 @@ from sqlalchemy.orm.exc import NoResultFound
 from burstdj.db import session_context
 from burstdj.models.playlist import Playlist
 from burstdj.models.track import Track
+from burstdj.models.user import User
 
+
+def get_user(user_id):
+    with session_context() as session:
+        user = session.query(User).filter(User.id==user_id).one()
+    return user
+
+def set_user_active_playlist(user_id, playlist_id):
+    with session_context() as session:
+        user = session.query(User).filter(User.id==user_id).one()
+        playlist = _get_playlist(session, user_id, playlist_id)
+        if playlist is None:
+            return False
+        user.active_playlist_id = playlist_id
+    return True
 
 def create_playlist(user_id, name):
     playlist = Playlist(name=name, user_id=user_id, tracks=[])
@@ -52,6 +67,15 @@ def add_track(user_id, playlist_id, track_id):
         if track_id in playlist.tracks:
             return False
         playlist.tracks = playlist.tracks + [track_id]
+    return True
+
+def remove_track(user_id, playlist_id, track_id):
+    with session_context() as session:
+        playlist = _get_playlist(session, user_id, playlist_id)
+        if track_id not in playlist.tracks:
+            return False
+        track_index = playlist.tracks.index(track_id)
+        playlist.tracks = playlist.tracks[:track_index] + playlist.tracks[track_index + 1:]
     return True
 
 def list_tracks(user_id, playlist_id):
