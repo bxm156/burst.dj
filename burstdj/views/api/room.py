@@ -54,7 +54,10 @@ def post_room(request):
 
 @rooms.get()
 def list_rooms(request):
-    pass
+    rooms = room_logic.list_rooms()
+    return [
+        dict(id=room.id, name=room.name) for room in rooms
+    ]
 
 @room_join.post()
 def join_room(request):

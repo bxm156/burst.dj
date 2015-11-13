@@ -22,11 +22,11 @@
 
   <body>
     <div id="header-row" class="row">
-        <div id="header" class="small-11 columns">
+        <div id="header" class="small-11 columns" style="padding-left: 40px;">
             <h1>burst<em>.dj</em></h1>
         </div>
         <div class="small-1 columns end" style="padding-top: 40px; margin-right: 0px; margin-left: auto;">
-            <a style="color: white" href="/logout">sign out</a>
+            <a style="color: white; " href="/logout">sign out</a>
         </div>
     </div>
     <div id="root-row" class="row">
@@ -132,7 +132,7 @@
       // 
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PAUSED) {
-          player.playVideo();
+//          player.playVideo();
         }
       }
       function stopVideo() {
