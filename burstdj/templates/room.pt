@@ -52,7 +52,7 @@
                         </form>
                         <ul class="no-bullet">
                             <li ng-repeat="playlist in playlists track by playlist.id">
-                            <a href="" ng-click="activate(playlist)">{{ playlist.name }}</a>
+                            <a ng-href="" ng-click="edit(playlist)">{{ playlist.name }}</a>
                             </li>
                         </ul>
                         <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
@@ -75,6 +75,17 @@
                                 <ul class="accordion no-bullet" data-accordion>
                                     <li class="accordion-navigation" ng-repeat="result in search_results" ng-click="addToPlaylist($event, new_playlist, result.video_id)">
                                         <img class="thumbnail" ng-src="{{ result.thumbnail_url }}"> {{ result.title }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Listing the tracks of a playlist here  -->
+                        <div id="playlistTracks" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                            <h5><a href="" ng-click="activate(showPlaylist)"> Activate playlist {{ playlistTitle }} </a></h5>
+                            <div id="tracklist">
+                                <ul class="accordion no-bullet" data-accordion>
+                                    <li class="accordion-navigation" ng-repeat="track in playlistTracks">
+                                        <a ng-href="" ng-click=""> {{ track.name }}</a>
                                     </li>
                                 </ul>
                             </div>

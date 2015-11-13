@@ -63,6 +63,12 @@ h2 {
     color: grey;
 }
 
+#tracklist {
+    max-height: 350px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .thumbnail {
     margin-right: 10px;
     width: 40px;

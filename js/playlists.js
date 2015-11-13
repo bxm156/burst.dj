@@ -22,6 +22,8 @@
             return $resource('/api/music_search/:query');
         }).factory('ActivePlaylistFactory', function($resource) {
             return $resource('/api/user/:userId/active_playlist');
+        }).factory('ListPlaylistTrackFactory', function($resource) {
+            return $resource('/api/user/:userId/playlist/:playlistId');
         }).controller('PlaylistController', [
             '$scope',
             'CurrentUserFactory',
@@ -29,7 +31,8 @@
             'ActivePlaylistFactory',
             'TrackFactory',
             'MusicSearchFactory',
-            function($scope, CurrentUserFactory, PlaylistFactory, ActivePlaylistFactory, TrackFactory, MusicSearchFactory) {
+            'ListPlaylistTrackFactory',
+            function($scope, CurrentUserFactory, PlaylistFactory, ActivePlaylistFactory, TrackFactory, MusicSearchFactory, ListPlaylistTrackFactory) {
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
                     $scope.greeting = user.name + "'s playlists";
@@ -54,7 +57,20 @@
                     });
                 };
                 $scope.edit = function($playlist) {
-                    //
+                    ListPlaylistTrackFactory.get({
+                        userId: $scope.user.id,
+                        playlistId: $playlist.id
+                    }, function(result) {
+                        $scope.showPlaylist = result
+                        $scope.playlistTitle = $playlist.name
+
+                        var tracks = []
+                        for (var i = 0; i < result.tracks.length; i++){
+                            tracks.push(result.tracks[i]);
+                        }
+                        $scope.playlistTracks = tracks
+                        $('#playlistTracks').foundation('reveal','open');
+                    });
                 };
                 $scope.activate = function($playlist) {
                     ActivePlaylistFactory.save({
