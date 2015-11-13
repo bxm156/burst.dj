@@ -82,12 +82,21 @@
                 </div>
                 <div class="small-6 columns">
                     <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
-                        <h4>{{ greeting }}</h4>
+                        <div class="row">
+                            <h4>{{ greeting }}</h4>
+                        </div>
 
-                        <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
-                        <div id="player"></div>
-
-                    </div> 
+                        <div class="row">
+                            <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
+                            <div id="player"></div>
+                        </div>
+                        <div class="row">
+                            <div id="users">{{ usersText }}</div>
+                        </div>
+                        <div class="row">
+                            <a href="" ng-click="toggleQueue()" class="button postfix">{{ queueActionText }}</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="small-3 columns">
                     <div id="chat">

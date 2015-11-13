@@ -98,7 +98,6 @@ def get_active_playlist(request):
         dict(
             id=track.id,
             name=track.name,
-            artist=track.artist,
         )
         for track in tracks
     ]
