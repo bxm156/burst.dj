@@ -8,5 +8,6 @@ burstdj/static
 burstdj/static/css/
 .idea/
 burst.dj.sqlite
+api_key
 node_modules/
 venv/

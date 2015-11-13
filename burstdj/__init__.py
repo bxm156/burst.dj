@@ -37,7 +37,7 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('login', '/login')
     config.add_route('find_room', '/find_room')
-    config.add_route('room', '/room')
+    config.add_route('room_page', '/room')
     config.add_route('logout', '/logout')
     config.add_route('whoami', '/whoami')
 

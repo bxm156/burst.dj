@@ -2,6 +2,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember
 from pyramid.view import view_config
 
+from burstdj.logic import security
 from burstdj.logic.security import USERS
 
 
@@ -23,13 +24,11 @@ class LoginViews:
         password = ''
 
         if 'form.submitted' in request.params:  #dafuq
-            login = request.params['login']
+            username = request.params['login']
             password = request.params['password']
 
-            # TODO: replace this bullshit with actual lookup in the user table.
-            # also get rid of password
-            if USERS.get(login) == password:
-                headers = remember(request, login)
+            headers = security.authenticate_user(request, username)
+            if headers:
                 return HTTPFound(
                     location='/find_room',
                     headers=headers,
