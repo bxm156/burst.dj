@@ -7,14 +7,24 @@
     ], function(angular, angularResource) {
         angular.module('dj.burst.playlists', [
             'ngResource'
-        ]).factory('PlaylistFactory', function($resource) {
-            return $resource('/user/:userId/playlist/:id', {
+        ]).factory('CurrentUserFactory', function($resource) {
+            return $resource('/api/current_user');
+        }).factory('PlaylistFactory', function($resource) {
+            return $resource('/api/user/:userId/playlist/:id', {
                     userId: '@userId',
                     id: '@id',
             });
-        }).controller('PlaylistController', ['$scope', 'PlaylistFactory', function($scope, PlaylistFactory) {
-            $scope.greeting = "Hello";
-            PlaylistFactory.get({userId:1, id:2});
-        }]);
+        }).controller('PlaylistController', [
+            '$scope',
+            'CurrentUserFactory',
+            'PlaylistFactory',
+            function($scope, CurrentUserFactory, PlaylistFactory) {
+                var user = CurrentUserFactory.get({}, function() {
+                    $scope.user = user;
+                    $scope.greeting = user.name + "'s Playlists";
+                });
+                PlaylistFactory.get({userId:1, id:2});
+            }
+        ]);
     });
 })(define);
