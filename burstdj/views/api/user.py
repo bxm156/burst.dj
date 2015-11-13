@@ -6,6 +6,7 @@ from pyramid.view import view_config
 
 from cornice import Service
 
+from burstdj.logic import security
 
 info_desc = """\
 This service is useful to get and set data for a user.
@@ -13,11 +14,23 @@ This service is useful to get and set data for a user.
 NOTE: this is just a dummy service to demonstrate how to do services
 """
 
+current_user = Service(name='current_user', path='/api/current_user', permission='authenticated')
+
 
 user_info = Service(name='users', path='/user/{username}/info',
                     description=info_desc)
 
 _USERS = defaultdict(dict)
+
+
+@current_user.get()
+def get_current_user(request):
+    user = security.get_current_user(request)
+    return dict(
+        id=user.id,
+        name=user.name,
+        avatar=user.avatar_url,
+    )
 
 
 @user_info.get()
