@@ -29,14 +29,22 @@
                     $scope.greeting = user.name + "'s playlists";
                     $scope.playlists = PlaylistFactory.query({userId:user.id});
                 });
-                $scope.create = function(playlist) {
-                    $('#createPlaylist').foundation('reveal','open');
+                $scope.create = function($playlist) {
+                    PlaylistFactory.save({
+                        userId: $scope.user.id,
+                        name: $playlist.name,
+                    }, function(playlist) {
+                        $scope.createPlaylistTitle = "Playlist: " + $playlist.name;
+                        $scope.new_playlist = $playlist;
+                        $('#createPlaylist').foundation('reveal','open');
+                        $scope.playlists = PlaylistFactory.query({userId:user.id});
+                    });
                 };
-                $scope.edit = function(playlist) {
+                $scope.edit = function($playlist) {
                     //
                 };
-                $scope.search = function(query) {
-                    MusicSearchFactory.get({query: query.term}, function(result) {
+                $scope.search = function($query) {
+                    MusicSearchFactory.get({query: $query.term}, function(result) {
                         var results = [];
                         for (var i = 0; i < result.items.length; i++){
                             if (result.items[i].id.videoId){

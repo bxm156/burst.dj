@@ -13,5 +13,11 @@ class Room(Base):
     current_track_id = Column(Integer)
     time_track_started = Column(DateTime)
 
+    # the last time we did a scrub of the room to take out stale users
+    time_scrubbed = Column(DateTime, default=now())
+
     #TODO: Include if we have extra time
     admin_user_id = Column(Integer)
+
+
+Index('room_name', Room.name, unique=True, mysql_length=255)

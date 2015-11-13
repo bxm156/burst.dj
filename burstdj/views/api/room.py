@@ -1,39 +1,53 @@
 from cornice import Service
-from burstdj.core.error import HTTPBadRequest, HTTPConflict
+from burstdj.core.error import HTTPBadRequest, HTTPConflict, HTTPNotFound, \
+    HTTPForbidden
 
 from burstdj.logic import security
 from burstdj.logic import room as room_logic
-from burstdj.logic.room import RoomAlreadyExists
+from burstdj.logic.room import RoomAlreadyExists, UserNotInRoom, RoomNotFound
 
+# POST: create a new room
+# GET: list all rooms
 rooms = Service(
     name='rooms',
     path='/api/room',
     permission='authenticated',
 )
 
-room = Service(
-    name='room',
-    path='/api/room/{room_id}',
-    permission='authenticated',
-)
-
+# join a room (observe)
 room_join = Service(
     name='room_join',
     path='/api/room/{room_id}/join',
     permission='authenticated',
 )
 
+# join the queue in a room (actively DJ)
 queue_join = Service(
-    name='room_queue_join',
+    name='queue_join',
     path='/api/room/{room_id}/queue/join',
     permission='authenticated',
 )
 
+# join the queue in a room (no longer DJ)
+queue_leave = Service(
+    name='queue_leave',
+    path='/api/room/{room_id}/queue/leave',
+    permission='authenticated',
+)
+
+# fetch the current activity for a room (poll)
 room_activity = Service(
     name='room_activity',
     path='/api/room/{room_id}/activity',
     permission='authenticated',
 )
+
+# # fetch the details for a room (this is redundant with activity)
+# room = Service(
+#     name='room',
+#     path='/api/room/{room_id}',
+#     permission='authenticated',
+# )
 
 
 @rooms.post()
@@ -67,20 +81,55 @@ def join_room(request):
     except:
         raise HTTPBadRequest()
     user_id = security.current_user_id(request)
-    room = room_logic.join_room(room_id, user_id)
+    try:
+        room = room_logic.join_room(room_id, user_id)
+    except RoomNotFound:
+        raise HTTPNotFound()
     return dict(
         id=room.id,
         name=room.name,
-        users=[
-            dict(id=user.id, name=user.name, avatar=user.avatar_url)
-            for user in room.users
-        ]
+        users=serialize_users(room.users)
     )
 
 
 @queue_join.post()
 def join_queue(request):
-    pass
+    room_id = request.matchdict['room_id']
+    try:
+        room_id = int(room_id)
+    except:
+        raise HTTPBadRequest()
+    user_id = security.current_user_id(request)
+    try:
+        newly_joined = room_logic.join_queue(room_id, user_id)
+    except UserNotInRoom:
+        raise HTTPForbidden()
+    except RoomNotFound:
+        raise HTTPNotFound()
+    return dict(
+        success=True,
+        newly_joined=newly_joined,
+    )
+
+
+@queue_leave.post()
+def leave_queue(request):
+    room_id = request.matchdict['room_id']
+    try:
+        room_id = int(room_id)
+    except:
+        raise HTTPBadRequest()
+    user_id = security.current_user_id(request)
+    try:
+        newly_bounced = room_logic.leave_queue(room_id, user_id)
+    except UserNotInRoom:
+        raise HTTPForbidden()
+    except RoomNotFound:
+        raise HTTPNotFound()
+    return dict(
+        success=True,
+        newly_bounced=newly_bounced,
+    )
 
 
 @room_activity.get()
@@ -92,10 +141,22 @@ def get_room_activity(request):
 
     # TODO: fetch current track for room
 
-    # TODO: fetch users in room
+    # fetch users in room, in order of joining
+    users = room_logic.list_room_users(room_id)
+
+    # fetch DJs in room, in order of who will play next
+    djs = room_logic.list_room_djs(room_id)
 
     return dict(
         room_id=room_id,
         current_track=None,
-        users=[],
+        users=serialize_users(users),
+        djs=serialize_users(djs),
     )
+
+
+def serialize_users(users):
+    return [serialize_user(user) for user in users]
+
+def serialize_user(user):
+    return dict(id=user.id, name=user.name, avatar=user.avatar_url)

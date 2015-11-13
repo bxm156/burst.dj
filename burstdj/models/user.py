@@ -19,4 +19,5 @@ class User(Base):
     avatar_url = Column(String)
     active_playlist_id = Column(Integer, ForeignKey("playlist.id"))
 
+
 Index('user_name', User.name, unique=True, mysql_length=255)

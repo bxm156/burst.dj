@@ -20,3 +20,15 @@ class HTTPConflict(httpexceptions.HTTPConflict):
     def __init__(self):
         super(HTTPConflict, self).__init__()
         json_error_helper(self)
+
+
+class HTTPNotFound(httpexceptions.HTTPNotFound):
+    def __init__(self):
+        super(HTTPNotFound, self).__init__()
+        json_error_helper(self)
+
+
+class HTTPForbidden(httpexceptions.HTTPForbidden):
+    def __init__(self):
+        super(HTTPForbidden, self).__init__()
+        json_error_helper(self)
