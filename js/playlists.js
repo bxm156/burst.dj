@@ -27,6 +27,9 @@
                     $scope.greeting = user.name + "'s playlists";
                     $scope.playlists = PlaylistFactory.get({userId:user.id});
                 });
+                $scope.create = function(playlist) {
+                    alert("Creating " + playlist.name);
+                }
             }
         ]);
     });

@@ -37,10 +37,10 @@
                                 <div class="small-12 columns">
                                     <div class="row collapse">
                                         <div class="small-10 columns">
-                                            <input type="text" placeholder="Playlist Name">
+                                            <input type="text" ng-model="playlist.name" placeholder="Playlist Name">
                                         </div>
                                         <div class="small-2 columns">
-                                            <a href="#" class="button postfix">+</a>
+                                            <a href="" ng-click="create(playlist)" class="button postfix">+</a>
                                         </div>
                                     </div>
                                 </div>
