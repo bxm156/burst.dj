@@ -59,6 +59,16 @@ h2 {
     overflow-y: auto;
 }
 
+.disabled-result {
+    color: grey;
+}
+
+#tracklist {
+    max-height: 350px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .thumbnail {
     margin-right: 10px;
     width: 40px;

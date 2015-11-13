@@ -81,7 +81,7 @@
                         $scope.active_playlist = $playlist  
                     });
                 };
-                $scope.addToPlaylist = function($playlist, $video_id) {
+                $scope.addToPlaylist = function($event, $playlist, $video_id) {
                     TrackFactory.save({
                         userId: $scope.user.id,
                         playlistId: $playlist.id
@@ -89,6 +89,7 @@
                         provider_track_id: $video_id,
                         provider: 'youtube',
                     });
+                    $event.target.setAttribute('class', 'disabled-result');
                 };
                 $scope.search = function($query) {
                     MusicSearchFactory.get({query: $query.term}, function(result) {
