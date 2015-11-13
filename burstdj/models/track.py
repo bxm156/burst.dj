@@ -21,7 +21,6 @@ class Track(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     time_created = Column(DateTime, default=now())
     name = Column(String)
-    artist = Column(String)
     provider = Column(Integer)
     track_provider_id = Column(String)
     length = Column(Integer)

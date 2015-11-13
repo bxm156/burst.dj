@@ -55,12 +55,9 @@ def _get_playlist(session, user_id, playlist_id):
         return None
     return playlist
 
-def add_track(user_id, playlist_id, track_id):
+def add_track(user_id, playlist_id, name, provider, track_provider_id, length_in_seconds):
+    track_id = _load_or_create_track(name, provider,track_provider_id, length_in_seconds)
     with session_context() as session:
-        try:
-            track = session.query(Track).filter(Track.id==track_id).one()
-        except NoResultFound:
-            return False
         playlist = _get_playlist(session, user_id, playlist_id)
         if playlist is None:
             return False
@@ -99,7 +96,7 @@ def list_tracks(user_id, playlist_id):
             continue
     return track_queue
 
-def next_track(user_id, playlist_id):
+def get_next_track(user_id, playlist_id):
     # Gets the top track in the queue and rotates the queue
     with session_context() as session:
         playlist = _get_playlist(session, user_id, playlist_id)
@@ -109,5 +106,35 @@ def next_track(user_id, playlist_id):
         tracks = deque(playlist.tracks)
         tracks.rotate(-1)
         playlist.tracks = list(tracks)
-        next_track = session.query(Track).filter(Track.id==next_track_id).one()
+        next_track = _load_track(session, next_track_id)
+    # Bunk track data, clean it up and get next track
+    if next_track is None:
+        remove_track(user_id, playlist_id, next_track_id)
+        return get_next_track(user_id, playlist_id)
     return next_track
+
+def _load_track(session, track_id):
+    try:
+        track = session.query(Track).filter(Track.id==track_id).one()
+    except NoResultFound:
+        return None
+    return track
+
+def _load_or_create_track(name, provider, track_provider_id, length_in_seconds):
+    with session_context() as session:
+        try:
+            track = session.query(Track).filter(
+                Track.provider == provider,
+                Track.track_provider_id == track_provider_id,
+            ).one()
+        except NoResultFound:
+            track = Track(
+                name=name,
+                provider=provider,
+                track_provider_id=track_provider_id,
+                length=length
+            )
+            session.add(track)
+    return track.id
+
+
