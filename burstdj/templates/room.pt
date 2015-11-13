@@ -72,7 +72,9 @@
                             </form>
                             <div id="search-results">
                                 <ul class="no-bullet">
-                                    <li ng-repeat="result in search_results">{{ result.title }}</li>
+                                    <li class="result" ng-repeat="result in search_results">
+                                        <img class="thumbnail" ng-src="{{ result.thumbnail_url }}"> {{ result.title }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
