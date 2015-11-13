@@ -59,6 +59,12 @@ h2 {
     overflow-y: auto;
 }
 
+#tracklist {
+    max-height: 350px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .thumbnail {
     margin-right: 10px;
     width: 40px;
