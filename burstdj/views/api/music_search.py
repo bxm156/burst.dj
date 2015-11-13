@@ -5,7 +5,7 @@ from cornice import Service
 
 search_activity = Service(
     name='music_search',
-    path='/room/music_search/{search_string}',
+    path='/api/music_search/{search_string}',
     permission='authenticated',
 )
 

@@ -14,16 +14,19 @@
                     userId: '@userId',
                     id: '@id',
             });
+        }).factory('MusicSearchFactory', function($resource) {
+            return $resource('/api/music_search/:query');
         }).controller('PlaylistController', [
             '$scope',
             'CurrentUserFactory',
             'PlaylistFactory',
-            function($scope, CurrentUserFactory, PlaylistFactory) {
+            'MusicSearchFactory',
+            function($scope, CurrentUserFactory, PlaylistFactory, MusicSearchFactory) {
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
                     $scope.greeting = user.name + "'s playlists";
+                    $scope.playlists = PlaylistFactory.get({userId:user.id});
                 });
-                PlaylistFactory.get({userId:1, id:2});
             }
         ]);
     });
