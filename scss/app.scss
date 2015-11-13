@@ -6,7 +6,11 @@ $row-width: 100%;
 $yelp_red: #af0606;
 
 body {
-    background-color: $yelp_red;
+    background-color: $jet;
+}
+
+#header-row { 
+    background-color: $yelp-red;
 }
 
 #header>h1 {
