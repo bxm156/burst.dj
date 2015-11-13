@@ -4,6 +4,7 @@ from sqlalchemy import Index
 from sqlalchemy import Integer
 from sqlalchemy.types import DateTime
 from sqlalchemy.types import String
+from sqlalchemy.sql.functions import now
 
 from burstdj.models import Base
 from burstdj.models import types
@@ -11,8 +12,8 @@ from burstdj.models import types
 
 class Track(Base):
     __tablename__ = 'track'
-    id = Column(Integer, primary_key=True)
-    time_created = Column(DateTime, server_default=func.now())
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    time_created = Column(DateTime, default=now())
     name = Column(String)
     artist = Column(String)
     provider = Column(Integer)
