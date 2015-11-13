@@ -73,9 +73,7 @@
                             <div id="search-results">
                                 <ul class="accordion no-bullet" data-accordion>
                                     <li class="accordion-navigation" ng-repeat="result in search_results">
-                                        <a ng-href="">
-                                            <img class="thumbnail" ng-src="{{ result.thumbnail_url }}"> {{ result.title }}
-                                        </a>
+                                        <a ng-href="" ng-click="addToPlaylist(new_playlist, result.video_id)"><img class="thumbnail" ng-src="{{ result.thumbnail_url }}"> {{ result.title }}</a>
                                     </li>
                                 </ul>
                             </div>
