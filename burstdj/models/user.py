@@ -8,5 +8,6 @@ class User(Base):
     avatar_url = Column(String)
     #TODO: make this into a foreign key when we create the playlist table
     active_playlist_id = Column(Integer)
+    playlists = relation("Playlist", backref="user")
 
 Index('user_name', User.name, unique=True, mysql_length=255)
