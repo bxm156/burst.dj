@@ -1,6 +1,5 @@
 from cornice import Service
-from burstdj.core.error import HTTPBadRequest, HTTPConflict
-
+from burstdj.core.error import HTTPBadRequest, HTTPConflict, HTTPNotFound
 from burstdj.logic import security
 from burstdj.logic import playlist as playlist_logic
 
@@ -10,15 +9,15 @@ playlists = Service(
     permission='authenticated',
 )
 
-playlist = Service(
-    name='playlist',
-    path='/api/user/{user_id}/playlist/{playlist_id}',
-    permission='authenticated',
-)
-
 add_track = Service(
     name='add_track',
     path='/api/user/{user_id}/playlist/{playlist_id}/add_track',
+    permission='authenticated',
+)
+
+playlist = Service(
+    name='playlist',
+    path='/api/user/{user_id}/playlist/{playlist_id}',
     permission='authenticated',
 )
 
@@ -77,7 +76,6 @@ def get_playlist(request):
         dict(
             id=track.id,
             name=track.name,
-            artist=track.artist,
         )
         for track in tracks
     ]
@@ -98,7 +96,7 @@ def get_active_playlist(request):
     if playlist is None:
         return None
 
-    tracks = playlist_logic.list_tracks(user_id, playlist_id)
+    tracks = playlist_logic.list_tracks(user_id, playlist.id)
     tracks_info = [
         dict(
             id=track.id,
@@ -114,33 +112,22 @@ def get_active_playlist(request):
     )
 
 @active_playlist.post()
-def get_active_playlist(request):
-    """Shows active playlist id for a user
+def set_active_playlist(request):
+    """Set the active playlist id for a user
     """
     user_id = request.matchdict['user_id']
+    playlist_id = request.json_body.get('playlist_id', None)
 
-    user = playlist_logic.get_user(user_id)
-    playlist = playlist_logic.get_playlist(user_id, user.active_playlist_id)
-    if playlist is None:
-        return None
+    success = playlist_logic.set_user_active_playlist(user_id, playlist_id)
+    if not success:
+        raise HTTPNotFound()
         
-    tracks = playlist_logic.list_tracks(user_id, playlist_id)
-    tracks_info = [
-        dict(
-            id=track.id,
-            name=track.name,
-            artist=track.artist,
-        )
-        for track in tracks
-    ]
     return dict(
-        id=playlist.id,
-        name=playlist.name,
-        tracks=tracks_info,
+        success=True,
     )
 
 @add_track.post()
-def add_track(request):
+def add_track_to_playlist(request):
     """Adds a track to a playlist
     """
     user_id = request.matchdict['user_id']
@@ -148,13 +135,13 @@ def add_track(request):
 
     name = request.json_body.get('name', None)
     provider = request.json_body.get('provider', None)
-    track_provider_id = request.json_body.get('track_provider_id', None)
+    provider_track_id = request.json_body.get('provider_track_id', None)
     length = request.json_body.get('length', None)
 
     if (
         name is None or
         provider is None or
-        track_provider_id is None or
+        provider_track_id is None or
         length is None
     ):
         raise HTTPBadRequest()
@@ -164,12 +151,7 @@ def add_track(request):
         playlist_id,
         name,
         provider,
-        track_provider_id,
+        provider_track_id,
         length,
     )
     return dict(success=success)
-
-
-
-
-

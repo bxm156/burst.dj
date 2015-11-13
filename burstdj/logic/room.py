@@ -1,13 +1,18 @@
 import datetime
+import logging
 from sqlalchemy import desc
 from sqlalchemy.sql.functions import count
 
 from burstdj import db
 from burstdj.logic import track as track_logic
+from burstdj.logic import playlist as playlist_logic
 from burstdj.models.room import Room
 from burstdj.models.room_queue import RoomQueue
 from burstdj.models.room_user import RoomUser
 from burstdj.models.user import User
+
+
+log = logging.getLogger('burstdj.room')
 
 
 # for now we'll do this, but we'll want to tighten it
@@ -92,7 +97,7 @@ def list_room_users(room_id):
         ).all()
 
 
-def _list_room_djs(session, room_id):
+def _query_room_djs(session, room_id):
     return session.query(
         User
     ).join(
@@ -102,7 +107,10 @@ def _list_room_djs(session, room_id):
     ).order_by(
         RoomQueue.time_created,
         RoomQueue.id,
-    ).all()
+    )
+
+def _list_room_djs(session, room_id):
+    return _query_room_djs(session, room_id).all()
 
 def list_room_djs(room_id):
     with db.session_context() as session:
@@ -112,8 +120,19 @@ def get_room(room_id):
     with db.session_context() as session:
         return _get_room(session, room_id)
 
-def _get_room(session, room_id):
-    room = session.query(Room).filter(Room.id == room_id).first()
+def _get_room(session, room_id, for_update=False):
+    """
+
+    :param session:
+    :param room_id:
+    :param for_update:
+    :return:
+    :rtype: Room
+    """
+    query = session.query(Room).filter(Room.id == room_id)
+    if for_update:
+        query = query.with_for_update()
+    room = query.first()
     if room is None:
         raise RoomNotFound()
     return room
@@ -163,6 +182,14 @@ def _is_user_in_queue(session, room_id, user_id):
         ).scalar()
     )
 
+def _add_user_to_queue(session, room_id, user_id):
+    room_queue = RoomQueue(
+        room_id=room_id,
+        user_id=user_id,
+    )
+    session.add(room_queue)
+    session.flush()
+    return room_queue
 
 def join_queue(room_id, user_id):
     with db.session_context() as session:
@@ -174,12 +201,7 @@ def join_queue(room_id, user_id):
         if _is_user_in_queue(session, room_id, user_id):
             return False
 
-        room_queue = RoomQueue(
-            room_id=room_id,
-            user_id=user_id,
-        )
-        session.add(room_queue)
-        session.flush()
+        _add_user_to_queue(session, room_id, user_id)
         return True
 
 
@@ -218,8 +240,60 @@ def current_track(session, room):
     return track
 
 
-def choose_next_track(session, room_id):
-    pass
+def _first_queue_entry(session, room):
+    """
+    :rtype: RoomQueue
+    """
+    return session.query(
+        RoomQueue
+    ).filter(
+        RoomQueue.room_id == room.id
+    ).order_by(
+        RoomQueue.time_created,
+        RoomQueue.id,
+    ).first()
+
+
+def _rotate_queue(session, room):
+    """rotate current user to end of queue and return True.
+
+    if there are no users, return False.
+    """
+    queue_entry = _first_queue_entry(session, room)
+    if queue_entry is None:
+        log.info("rotate_queue: empty")
+        return False
+
+    user_id = queue_entry.user_id
+    log.info("rotate_queue: moving user:%s to end of queue", user_id)
+    session.delete(queue_entry)
+    session.flush()
+
+    _add_user_to_queue(session, room.id, user_id)
+    session.flush()
+
+    return True
+
+
+def choose_next_track(session, room):
+    # pick next user from queue
+    # TODO: check that user's last ping is decent
+    queue_entry = _first_queue_entry(session, room)
+    if queue_entry is None:
+        return None
+
+    user_id = queue_entry.user_id
+    playlist_id = playlist_logic._get_user_active_playlist_id(session, user_id)
+    track = playlist_logic._get_next_track(session, user_id, playlist_id)
+    if track is None:
+        # this guy has no right to be DJing
+        log.info("removing user:%s from queue due to no track", user_id)
+        session.delete(queue_entry)
+        session.flush()
+        return choose_next_track(session, room)
+
+    track.user_id = user_id
+    return track
 
 
 def get_current_room_track(room_id):
@@ -227,13 +301,25 @@ def get_current_room_track(room_id):
     :rtype: Track
     """
     with db.session_context() as session:
-        room = _get_room(session, room_id)
+        room = _get_room(session, room_id, for_update=True)
         track = current_track(session, room)
-        if not track:
-            track = choose_next_track(session, room_id)
+        if track:
+            log.info("get_current_room_track: same track %s", track.name)
+        else:
+            queue_populated = _rotate_queue(session, room)
+            if queue_populated:
+                # can only get next track if queue is valid
+                track = choose_next_track(session, room)
+            if track:
+                log.info("get_current_room_track: new track %s, user %s", track.name, track.user_id)
+                room.current_track_id = track.id
+                room.current_user_id = track.user_id
+                room.time_track_started = datetime.datetime.now()
+            else:
+                room.current_track_id = None
+                room.current_user_id = None
+                room.time_track_started = None
+                log.info("get_current_room_track: no track")
 
     room.track = track
     return room
-
-def get_room_info(room_id):
-    pass

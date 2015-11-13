@@ -22,7 +22,7 @@ class Track(Base):
     time_created = Column(DateTime, default=now())
     name = Column(String)
     provider = Column(Integer)
-    track_provider_id = Column(String)
+    provider_track_id = Column(String)
     length = Column(Integer)
 
-Index('track_id', Track.provider, Track.track_provider_id, unique=True)
+Index('track_id', Track.provider, Track.provider_track_id, unique=True)

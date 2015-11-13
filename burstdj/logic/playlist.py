@@ -14,6 +14,7 @@ def get_user(user_id):
         user = session.query(User).filter(User.id==user_id).one()
     return user
 
+
 def set_user_active_playlist(user_id, playlist_id):
     with session_context() as session:
         user = session.query(User).filter(User.id==user_id).one()
@@ -22,6 +23,12 @@ def set_user_active_playlist(user_id, playlist_id):
             return False
         user.active_playlist_id = playlist_id
     return True
+
+
+def _get_user_active_playlist_id(session, user_id):
+    user = session.query(User).filter(User.id==user_id).one()
+    return user.active_playlist_id
+
 
 def create_playlist(user_id, name):
     playlist = Playlist(name=name, user_id=user_id, tracks=[])
@@ -55,8 +62,8 @@ def _get_playlist(session, user_id, playlist_id):
         return None
     return playlist
 
-def add_track(user_id, playlist_id, name, provider, track_provider_id, length_in_seconds):
-    track_id = _load_or_create_track(name, provider,track_provider_id, length_in_seconds)
+def add_track(user_id, playlist_id, name, provider, provider_track_id, length_in_seconds):
+    track_id = _load_or_create_track(name, provider, provider_track_id, length_in_seconds)
     with session_context() as session:
         playlist = _get_playlist(session, user_id, playlist_id)
         if playlist is None:
@@ -68,11 +75,14 @@ def add_track(user_id, playlist_id, name, provider, track_provider_id, length_in
 
 def remove_track(user_id, playlist_id, track_id):
     with session_context() as session:
-        playlist = _get_playlist(session, user_id, playlist_id)
-        if track_id not in playlist.tracks:
-            return False
-        track_index = playlist.tracks.index(track_id)
-        playlist.tracks = playlist.tracks[:track_index] + playlist.tracks[track_index + 1:]
+        return _remove_track(session, user_id, playlist_id, track_id)
+
+def _remove_track(session, user_id, playlist_id, track_id):
+    playlist = _get_playlist(session, user_id, playlist_id)
+    if track_id not in playlist.tracks:
+        return False
+    track_index = playlist.tracks.index(track_id)
+    playlist.tracks = playlist.tracks[:track_index] + playlist.tracks[track_index + 1:]
     return True
 
 def list_tracks(user_id, playlist_id):
@@ -96,21 +106,21 @@ def list_tracks(user_id, playlist_id):
             continue
     return track_queue
 
-def get_next_track(user_id, playlist_id):
+def _get_next_track(session, user_id, playlist_id):
     # Gets the top track in the queue and rotates the queue
-    with session_context() as session:
-        playlist = _get_playlist(session, user_id, playlist_id)
-        if playlist is None or not playlist.tracks:
-            return None
-        next_track_id = playlist.tracks[0]
-        tracks = deque(playlist.tracks)
-        tracks.rotate(-1)
-        playlist.tracks = list(tracks)
-        next_track = _load_track(session, next_track_id)
+    playlist = _get_playlist(session, user_id, playlist_id)
+    if playlist is None or not playlist.tracks:
+        return None
+    next_track_id = playlist.tracks[0]
+    tracks = deque(playlist.tracks)
+    tracks.rotate(-1)
+    playlist.tracks = list(tracks)
+    next_track = _load_track(session, next_track_id)
+
     # Bunk track data, clean it up and get next track
     if next_track is None:
-        remove_track(user_id, playlist_id, next_track_id)
-        return get_next_track(user_id, playlist_id)
+        _remove_track(session, user_id, playlist_id, next_track_id)
+        return _get_next_track(session, user_id, playlist_id)
     return next_track
 
 def _load_track(session, track_id):
@@ -120,18 +130,18 @@ def _load_track(session, track_id):
         return None
     return track
 
-def _load_or_create_track(name, provider, track_provider_id, length_in_seconds):
+def _load_or_create_track(name, provider, provider_track_id, length):
     with session_context() as session:
         try:
             track = session.query(Track).filter(
                 Track.provider == provider,
-                Track.track_provider_id == track_provider_id,
+                Track.provider_track_id == provider_track_id,
             ).one()
         except NoResultFound:
             track = Track(
                 name=name,
                 provider=provider,
-                track_provider_id=track_provider_id,
+                provider_track_id=provider_track_id,
                 length=length
             )
             session.add(track)
