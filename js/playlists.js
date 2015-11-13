@@ -37,11 +37,16 @@
                         $scope.createPlaylistTitle = "Playlist: " + $playlist.name;
                         $scope.new_playlist = $playlist;
                         $('#createPlaylist').foundation('reveal','open');
-                        $scope.playlists = PlaylistFactory.query({userId:user.id});
+                        PlaylistFactory.query({userId:user.id}, function(playlists) {
+                            $scope.playlists = playlists;  
+                        });
                     });
                 };
                 $scope.edit = function($playlist) {
                     //
+                };
+                $scope.activate = function($playlist) {
+
                 };
                 $scope.search = function($query) {
                     MusicSearchFactory.get({query: $query.term}, function(result) {

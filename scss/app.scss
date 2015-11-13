@@ -48,6 +48,18 @@ h2 {
     color: $white;
 }
 
+#search-results {
+    color: $black;
+}
+
+#chat-room {
+    background-color: $black;
+}
+
+#chat-messages {
+    min-height: 25rem;
+}
+
 #viewer {
     width: 800px;
     height: 600px;
