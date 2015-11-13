@@ -26,7 +26,8 @@
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
                     $scope.greeting = user.name + "'s playlists";
-                    $scope.playlists = PlaylistFactory.get({userId:user.id});
+                    //$scope.playlists = PlaylistFactory.get({userId:user.id});
+                    $scope.playlists = [{id: 1, name: "test1"}]
                 });
                 $scope.create = function(playlist) {
                     $('#createPlaylist').foundation('reveal','open');
