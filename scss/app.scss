@@ -48,6 +48,11 @@ h2 {
     color: $white;
 }
 
+#viewer {
+    width: 800px;
+    height: 600px;
+}
+
 /* Angular JS Hacks */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;

@@ -77,7 +77,7 @@
                 <div class="small-6 columns">
                     <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
                         <h4>{{ greeting }}</h4>
-                        <div id="player"></div>
+                        <div id="viewer"></div>
                     </div> 
                 </div>
                 <div class="small-3 columns">
@@ -92,6 +92,11 @@
     <script src="${request.static_url('burstdj:static/js/require-config.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/site.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/boostrap.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/jquery-1.11.3.min.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/three.min.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/CSS3DRenderer.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/OrbitControls.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/webgl_room.js')}"></script>
     <script>
       // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
