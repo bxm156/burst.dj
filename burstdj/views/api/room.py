@@ -28,6 +28,13 @@ queue_join = Service(
     permission='authenticated',
 )
 
+# join the queue in a room (no longer DJ)
+queue_leave = Service(
+    name='queue_leave',
+    path='/api/room/{room_id}/queue/leave',
+    permission='authenticated',
+)
+
 # fetch the current activity for a room (poll)
 room_activity = Service(
     name='room_activity',
@@ -102,6 +109,26 @@ def join_queue(request):
     return dict(
         success=True,
         newly_joined=newly_joined,
+    )
+
+
+@queue_leave.post()
+def leave_queue(request):
+    room_id = request.matchdict['room_id']
+    try:
+        room_id = int(room_id)
+    except:
+        raise HTTPBadRequest()
+    user_id = security.current_user_id(request)
+    try:
+        newly_bounced = room_logic.leave_queue(room_id, user_id)
+    except UserNotInRoom:
+        raise HTTPForbidden()
+    except RoomNotFound:
+        raise HTTPNotFound()
+    return dict(
+        success=True,
+        newly_bounced=newly_bounced,
     )
 
 

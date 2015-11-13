@@ -166,7 +166,20 @@ def join_queue(room_id, user_id):
 
 
 def leave_queue(room_id, user_id):
-    pass
+    with db.session_context() as session:
+        if not _does_room_exist(session, room_id):
+            raise RoomNotFound()
+        if not _is_user_in_room(session, room_id, user_id):
+            raise UserNotInRoom()
+
+        rows_deleted = session.query(
+            RoomQueue,
+        ).filter(
+            RoomQueue.user_id == user_id,
+            RoomQueue.room_id == room_id,
+        ).delete()
+
+        return bool(rows_deleted)
 
 
 def get_current_track(room_id):
