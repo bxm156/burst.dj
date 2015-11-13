@@ -23,6 +23,15 @@ body {
 #header>h1>em {
     font-weight: 700;
 }
+
+label {
+    color: $white;
+}
+
+h2 {
+    color: $white;
+}
+
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",

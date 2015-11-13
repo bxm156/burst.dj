@@ -22,8 +22,21 @@
 
   <body>
     <div class="row">
-        <div id="header" class="small-10 small-centered columns end">
+        <div id="header" class="small-10 columns">
             <h1>burst<em>.dj</em></h1>
+        </div>
+        <div class="small-2 columns end">
+            <a href="/logout" class="button">Sign out</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 small-centered columns">
+            <h2>Join a room</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 small-centered columns">
+            <p>biatch!</p>
         </div>
     </div>
   </body>

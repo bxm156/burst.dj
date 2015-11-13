@@ -1,19 +1,31 @@
+from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
+from burstdj.logic import security
 from burstdj.models import DBSession
 from burstdj.models.mymodel import MyModel
 
 
 @view_config(route_name='home', renderer='../templates/index.pt')
-def my_view(request):
+def home(request):
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
     except DBAPIError:
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
-    return {'one': one, 'project': 'burst.dj'}
+
+    if not security.is_request_authenticated(request):
+        return HTTPFound(
+            location='/login'
+        )
+    else:
+        return HTTPFound(
+            location='/find_room'
+        )
+
+    # return {'one': one, 'project': 'burst.dj'}
 
 
 conn_err_msg = """\
