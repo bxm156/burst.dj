@@ -29,6 +29,7 @@ def serialize_track(track, time_started=None):
         provider=track.provider,
         time_started=time_started,
         length=track.length,
+        average_rating=track.average_rating,
     )
 
 
@@ -48,8 +49,8 @@ def rate_track(user_id, track_id, rating):
         rating = int(rating)
         if rating > 10:
             rating = 10
-        if rating < 1:
-            rating = 1
+        if rating < 2:
+            rating = 2
         try:
             current_rating = session.query(UserTrackRating).filter(
                 UserTrackRating.user_id==user_id,
