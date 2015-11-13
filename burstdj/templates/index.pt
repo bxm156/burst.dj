@@ -21,10 +21,14 @@
   </head>
 
   <body>
-    <div class="row">
+    <div id="header-row" class="row">
         <div id="header" class="small-10 small-centered columns end">
             <h1>burst<em>.dj</em></h1>
         </div>
     </div>
+    <script src="${request.static_url('burstdj:static/requirejs/require.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/require-config.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/site.js')}"></script>
+    <script src="${request.static_url('burstdj:static/js/boostrap.js')}"></script>
   </body>
 </html>

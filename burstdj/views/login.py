@@ -25,6 +25,9 @@ class LoginViews:
         if 'form.submitted' in request.params:  #dafuq
             login = request.params['login']
             password = request.params['password']
+
+            # TODO: replace this bullshit with actual lookup in the user table.
+            # also get rid of password
             if USERS.get(login) == password:
                 headers = remember(request, login)
                 return HTTPFound(

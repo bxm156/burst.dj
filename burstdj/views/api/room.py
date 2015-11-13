@@ -1,11 +1,5 @@
 from collections import defaultdict
-
-from pyramid.exceptions import Forbidden
-from pyramid.security import authenticated_userid, effective_principals
-from pyramid.view import view_config
-
 from cornice import Service
-
 
 
 room_activity = Service(
