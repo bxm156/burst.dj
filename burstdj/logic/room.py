@@ -18,7 +18,7 @@ log = logging.getLogger('burstdj.room')
 
 # for now we'll do this, but we'll want to tighten it
 TRACK_FINISH_BUFFER = 2
-TRACK_MAX_PLAYTIME = 60
+TRACK_MAX_PLAYTIME = sys.maxint
 
 class RoomAlreadyExists(Exception):
     pass

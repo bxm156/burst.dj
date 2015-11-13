@@ -1,3 +1,5 @@
+import time
+
 from burstdj.models.track import Track
 from burstdj.models.user_track_rating import UserTrackRating
 from burstdj.logic.playlist import get_user
@@ -18,7 +20,8 @@ def load_track_by_id(session, track_id):
 def serialize_track(track, time_started=None):
     if track is None:
         return None
-    time_started = None if time_started is None else time_started.isoformat()
+
+    time_started = None if time_started is None else time.mktime(time_started.timetuple())
     return dict(
         id=track.id,
         name=track.name,

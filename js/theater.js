@@ -31,7 +31,7 @@
             'QueueLeaveFactory',
             'ActivityFactory',
             function($scope, $interval, CurrentUserFactory, RoomsFactory, JoinFactory, QueueJoinFactory, QueueLeaveFactory, ActivityFactory) {
-                $scope.greeting = "Deez Nuts";
+                $scope.greeting = "Silence is Golden";
                 $scope.queueActionText = "Join Queue";
                 $scope.isSpinning = false;
 
@@ -135,8 +135,16 @@
                                 || latestTrack.time_started != currentTrack.time_started) {
                                 // new shit
                                 $scope.track = latestTrack;
-                                // TODO: offset if we're joining party late
-                                player.loadVideoById({videoId: latestTrack.provider_track_id});
+
+                                // offset if we're joining party late
+                                var timeStarted = new Date(latestTrack.time_started * 1000.0);
+                                var currentTime = new Date();
+                                var offset = 0;
+                                if (currentTime - timeStarted > 0) {
+                                    offset = (currentTime - timeStarted) / 1000.0;
+                                }
+
+                                player.loadVideoById({videoId: latestTrack.provider_track_id, startSeconds:offset});
                             }
                             else {
                                 // same shit
