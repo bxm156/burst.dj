@@ -11,10 +11,10 @@ from burstdj.models.mymodel import MyModel
 
 @view_config(route_name='home', renderer='../templates/index.pt')
 def home(request):
-    try:
-        one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-    except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain', status_int=500)
+    # try:
+    #     one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
+    # except DBAPIError:
+    #     return Response(conn_err_msg, content_type='text/plain', status_int=500)
 
     if not security.is_request_authenticated(request):
         return HTTPFound(

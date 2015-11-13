@@ -1,6 +1,5 @@
 import os
 import sys
-import transaction
 
 from sqlalchemy import engine_from_config
 
@@ -11,11 +10,16 @@ from pyramid.paster import (
 
 from pyramid.scripts.common import parse_vars
 
-from burstdj.models import DBSession, Base
+from burstdj.models import DBSession
+from burstdj.models import Base
+
+# leave these here, they have to be imported for this script to create the tables
 from burstdj.models.user import User
 from burstdj.models.playlist import Playlist
+from burstdj.models.room import Room
+from burstdj.models.room_queue import RoomQueue
+from burstdj.models.room_user import RoomUser
 from burstdj.models.track import Track
-
 
 
 def usage(argv):
