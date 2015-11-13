@@ -40,7 +40,7 @@ h4.active-playlist {
     color: greenyellow;
 }
 
-#playlists, #theater, #chat {
+#playlists, #theater, #dj {
     margin-top: 1rem;
 }
 
@@ -74,20 +74,14 @@ h2 {
     width: 40px;
     height: 40px;
 }
-#chat {
-    visibility: hidden;
-}
-#chat-room {
-    background-color: $black;
-}
-
-#chat-messages {
-    min-height: 25rem;
-}
 
 #viewer {
     width: 800px;
     height: 600px;
+}
+
+#dj-list {
+    min-height: 25rem;
 }
 
 /* Angular JS Hacks */

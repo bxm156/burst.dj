@@ -92,56 +92,47 @@
                         </div>
                     </div> 
                 </div>
-                <div class="small-6 columns">
-                    <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
-                        <div class="row">
-                            <h4>{{ greeting }}</h4>
-                        </div>
+                <div ng-controller="TheaterController" ng-cloak>
+                    <div class="small-6 columns" >
+                        <div id="theater" class="text-center" >
+                            <div class="row">
+                                <h4>{{ greeting }}</h4>
+                            </div>
 
-                        <div class="row">
-                            <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
-                            <div id="player"></div>
-                        </div>
-                        <div class="row">
-                            <div id="users">{{ usersText }}</div>
-                        </div>
-                        <div class="row">
-                            <a href="" ng-click="toggleQueue()" class="button postfix">{{ queueActionText }}</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="small-3 columns">
-                    <div id="chat">
-                        <h3>Chat</h3>
-                        <div id="chat-room">
-                            <div id="chat-messages"></div>
-                        </div>
-                        <form>
                             <div class="row">
                                 <div class="small-12 columns">
-                                    <div class="row collapse">
-                                        <div class="small-10 columns">
-                                            <input type="text" placeholder="Message..."></input>
-                                        </div>
-                                        <div class="small-2 columns">
-                                            <a href="" class="button postfix">Send</a>
-                                        </div>
-                                    </div>
+                                    <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
+                                    <div id="player"></div>
                                 </div>
                             </div>
-                        </form>
+                            <div class="row">
+                                <div class="small-12 columns">
+                                    <div id="users">{{ usersText }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="small-3 columns">
+                        <div id="dj">
+                            <h3>DJs</h3>
+                            <div id="dj-list">
+                            <ul>
+                                <li ng-repeat="dj in djs">DJ {{ dj.name }}</li>
+                                <ul>
+                            </div>
+                            <a href="" ng-click="toggleQueue()" class="button">{{ queueActionText }}</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <div>
+            <div>
         </div>
     <script src="${request.static_url('burstdj:static/requirejs/require.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/require-config.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/site.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/boostrap.js')}"></script>
-    <script src="${request.static_url('burstdj:static/js/jquery-1.11.3.min.js')}"></script>
 
     <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
+    <!--?<script src="${request.static_url('burstdj:static/js/jquery-1.11.3.min.js')}"></script>-->
     <!--?<script src="${request.static_url('burstdj:static/js/three.min.js')}"></script>-->
     <!--?<script src="${request.static_url('burstdj:static/js/CSS3DRenderer.js')}"></script>-->
     <!--?<script src="${request.static_url('burstdj:static/js/OrbitControls.js')}"></script>-->
