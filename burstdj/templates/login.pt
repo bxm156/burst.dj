@@ -49,15 +49,9 @@
                 </label>
             </div>
         </div>
-        <div class="row">
-            <div class="small-4 small-centered columns">
-                <label for="password">Password
-                    <input type="password" id="password"
-                           name="password"
-                           value="${password}"/>
-                </label>
-            </div>
-        </div>
+        <input type="hidden" id="password"
+               name="password"
+               value=""/>
         <div class="row">
 
             <div class="small-4 small-centered columns">
