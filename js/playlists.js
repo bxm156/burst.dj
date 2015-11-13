@@ -36,7 +36,6 @@
                 };
                 $scope.search = function(query) {
                     MusicSearchFactory.get({query: query.term}, function(result) {
-                        alert(results);
                     });
                 };
             }
