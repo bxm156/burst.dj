@@ -127,11 +127,13 @@
                         var currentTrack = $scope.track;
                         var latestTrack = result.track;
                         if (latestTrack) {
+                            var rating = "0"
+                            if (latestTrack.average_rating != undefined) {rating=latestTrack.average_rating}
+                            $scope.rating_img = "o"+rating+"hstars_medium@2x.png";
                             if (!currentTrack
                                 || latestTrack.id != currentTrack.id
                                 || latestTrack.time_started != currentTrack.time_started) {
                                 // new shit
-                                $scope.greeting = latestTrack.name;
                                 $scope.track = latestTrack;
                                 // TODO: offset if we're joining party late
                                 player.loadVideoById({videoId: latestTrack.provider_track_id});

@@ -97,7 +97,9 @@
                         <div class="row">
                             <h4>{{ greeting }}</h4>
                         </div>
-
+                        <div class="row">
+                            <img ng-src="/static/resources/star_rating/{{rating_img}}"/>
+                        </div>
                         <div class="row">
                             <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
                             <div id="player"></div>
