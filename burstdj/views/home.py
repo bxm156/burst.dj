@@ -20,8 +20,12 @@ def home(request):
         return HTTPFound(
             location='/login'
         )
+    else:
+        return HTTPFound(
+            location='/find_room'
+        )
 
-    return {'one': one, 'project': 'burst.dj'}
+    # return {'one': one, 'project': 'burst.dj'}
 
 
 conn_err_msg = """\

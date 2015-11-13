@@ -1,25 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Quick Tutorial: ${name}</title>
-</head>
-<body>
-<h1>Login</h1>
-<span tal:replace="message"/>
 
-<form action="${url}" method="post">
-    <input type="hidden" name="came_from"
-           value="${came_from}"/>
-    <label for="login">Username</label>
-    <input type="text" id="login"
-           name="login"
-           value="${login}"/><br/>
-    <label for="password">Password</label>
-    <input type="password" id="password"
-           name="password"
-           value="${password}"/><br/>
-    <input type="submit" name="form.submitted"
-           value="Log In"/>
-</form>
-</body>
+<!DOCTYPE html>
+<html lang="${request.locale_name}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="pyramid web application">
+    <meta name="author" content="Pylons Project">
+    <link rel="shortcut icon" href="${request.static_url('burstdj:static/pyramid-16x16.png')}">
+
+    <title>burst.dj</title>
+
+    <!-- Custom styles for this scaffold -->
+    <link href="${request.static_url('burstdj:static/css/app.css')}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="row">
+        <div id="header" class="small-10 small-centered columns end">
+            <h1>burst<em>.dj</em></h1>
+        </div>
+    </div>
+    <form action="${url}" method="post">
+        <input type="hidden" name="came_from"
+               value="${came_from}"/>
+        <div class="row">
+            <div class="small-4 small-centered columns">
+                <h2>Sign in</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-4 small-centered columns">
+                <span tal:replace="message"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-4 small-centered columns">
+                <label for="login">Username
+                    <input type="text" id="login"
+                           name="login"
+                           value="${login}"/>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-4 small-centered columns">
+                <label for="password">Password
+                    <input type="password" id="password"
+                           name="password"
+                           value="${password}"/>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="small-4 small-centered columns">
+                <input type="submit" name="form.submitted"
+                       value="Log In" class="button"/>
+            </div>
+        </div>
+    </form>
+  </body>
 </html>
