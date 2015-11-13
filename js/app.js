@@ -5,7 +5,7 @@
         'angular',
         'js/playlists',
         'js/theater'
-    ], function(angular) {
+    ], function(angular, playlists, theater) {
         angular.module('dj.burst', [
             'dj.burst.playlists',
             'dj.burst.theater'

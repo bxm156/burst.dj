@@ -7,6 +7,7 @@ $yelp_red: #af0606;
 
 body {
     background-color: $jet;
+    color: $white;
 }
 
 #header-row { 
@@ -30,6 +31,11 @@ label {
 
 h2 {
     color: $white;
+}
+
+/* Angular JS Hacks */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
 }
 
 // Or selectively include components

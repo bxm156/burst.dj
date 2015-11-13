@@ -5,7 +5,8 @@
         'angular',
     ], function(angular) {
         angular.module('dj.burst.theater', [    
-        ]);
-        alert("theater");
+        ]).controller('TheaterController', ['$scope', function($scope) {
+            $scope.greeting = "Movie";       
+        }]);
     });
 })(define);

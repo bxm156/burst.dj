@@ -5,7 +5,8 @@
         'angular',
     ], function(angular) {
         angular.module('dj.burst.playlists', [    
-        ]);
-        alert("playlists");
+        ]).controller('PlaylistController', ['$scope', function($scope) {
+            $scope.greeting = "Hello";       
+        }]);
     });
 })(define);
