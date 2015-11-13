@@ -72,6 +72,34 @@ def _leave_rooms(session, user_id):
     ).delete()
 
 
+def list_room_users(room_id):
+    with db.session_context() as session:
+        return session.query(
+            User
+        ).join(
+            RoomUser
+        ).filter(
+            RoomUser.room_id == room_id
+        ).order_by(
+            RoomUser.time_created,
+            RoomUser.id,
+        ).all()
+
+
+def list_room_djs(room_id):
+    with db.session_context() as session:
+        return session.query(
+            User
+        ).join(
+            RoomQueue
+        ).filter(
+            RoomQueue.room_id == room_id
+        ).order_by(
+            RoomQueue.time_created,
+            RoomQueue.id,
+        ).all()
+
+
 def join_room(room_id, user_id):
     with db.session_context() as session:
         if not _does_room_exist(session, room_id):
@@ -88,16 +116,9 @@ def join_room(room_id, user_id):
         session.flush()
 
         room = session.query(Room).filter(Room.id == room_id).first()
-        users = session.query(
-            User
-        ).join(
-            RoomUser
-        ).filter(
-            RoomUser.room_id == room_id
-        ).all()
 
     # lol
-    room.users = users
+    room.users = list_room_users(room_id)
     return room
 
 
@@ -114,11 +135,34 @@ def _is_user_in_room(session, room_id, user_id):
         ).scalar()
     )
 
+def _is_user_in_queue(session, room_id, user_id):
+    return bool(
+        session.query(
+            count(RoomQueue.id)
+        ).filter(
+            RoomQueue.user_id == user_id,
+            RoomQueue.room_id == room_id
+        ).scalar()
+    )
+
 
 def join_queue(room_id, user_id):
     with db.session_context() as session:
+        if not _does_room_exist(session, room_id):
+            raise RoomNotFound()
         if not _is_user_in_room(session, room_id, user_id):
             raise UserNotInRoom()
+
+        if _is_user_in_queue(session, room_id, user_id):
+            return False
+
+        room_queue = RoomQueue(
+            room_id=room_id,
+            user_id=user_id,
+        )
+        session.add(room_queue)
+        session.flush()
+        return True
 
 
 def leave_queue(room_id, user_id):

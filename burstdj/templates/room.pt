@@ -50,10 +50,12 @@
                             </div>
                         </form>
                         <ul class="no-bullet">
-                            <li ng-repeat="playlist in playlists track by playlist.id">{{ playlist.name }}</li>
+                            <li ng-repeat="playlist in playlists track by playlist.id">
+                            <a href="" ng-click="edit(playlist)">{{ playlist.name }}</a>
+                            </li>
                         </ul>
                         <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-                            <h5>Create</h5>
+                            <h5>{{ createPlaylistTitle }}</h5>
                             <form>
                                 <div class="row">
                                     <div class="small-12 columns">
