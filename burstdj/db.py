@@ -25,3 +25,4 @@ def session_context():
         transaction.commit()
     except:
         transaction.abort()
+        raise

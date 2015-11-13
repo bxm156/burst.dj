@@ -32,6 +32,20 @@
                 <div class="small-3 columns">
                     <div id="playlists" ng-controller="PlaylistController" ng-cloak>
                         <h3>{{ greeting }}</h3>
+                        <form>
+                            <div class="row">
+                                <div class="small-12 columns">
+                                    <div class="row collapse">
+                                        <div class="small-10 columns">
+                                            <input type="text" placeholder="Playlist Name">
+                                        </div>
+                                        <div class="small-2 columns">
+                                            <a href="#" class="button postfix">+</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div> 
                 </div>
                 <div class="small-6 columns">
