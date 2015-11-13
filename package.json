@@ -8,6 +8,7 @@
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-sass": "*",
     "grunt-contrib-watch": "*",
+    "grunt-contrib-copy": "*",
     "grunt-bower": "*"
   }
 }
