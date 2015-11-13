@@ -30,7 +30,7 @@ class LoginViews:
             headers = security.authenticate_user(request, username)
             if headers:
                 return HTTPFound(
-                    location='/find_room',
+                    location='/room',
                     headers=headers,
                 )
             message = 'Failed login'

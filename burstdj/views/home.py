@@ -22,7 +22,7 @@ def home(request):
         )
     else:
         return HTTPFound(
-            location='/find_room'
+            location='/room'
         )
 
     # return {'one': one, 'project': 'burst.dj'}

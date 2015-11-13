@@ -1,4 +1,3 @@
-from collections import defaultdict
 from cornice import Service
 from burstdj.core.error import HTTPBadRequest, HTTPConflict
 
