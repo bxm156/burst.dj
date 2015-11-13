@@ -16,8 +16,22 @@ module.exports = function (grunt) {
           'default': {
               dest: 'burstdj/static',
               options: {
-                  expand: true
+                  expand: true,
+                  packageSpecific: {
+                      'foundation': {
+                          files: [
+                            "js/foundation/foundation.reveal.js"
+                          ]
+                      }
+                  }
               }
+          }
+      },
+      copy: {
+          'js': {
+              files: [
+                {expand: true, src: ['js/**'], dest: 'burstdj/static'},
+            ],
           }
       },
       sass: {
@@ -39,10 +53,12 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-bower');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
   grunt.registerTask('default', [
     'sass:default',
     'bower:default',
+    'copy:js',
   ]);
 };
