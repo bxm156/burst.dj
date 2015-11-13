@@ -25,6 +25,7 @@ require.config({
         },
     },
     priority: [
+        'foundation',
         'angular'
     ]
 });
