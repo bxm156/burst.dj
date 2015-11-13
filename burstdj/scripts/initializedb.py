@@ -20,6 +20,7 @@ from burstdj.models.room import Room
 from burstdj.models.room_queue import RoomQueue
 from burstdj.models.room_user import RoomUser
 from burstdj.models.track import Track
+from burstdj.models.user_track_rating import UserTrackRating
 
 
 def usage(argv):

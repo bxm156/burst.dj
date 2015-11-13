@@ -24,5 +24,6 @@ class Track(Base):
     provider = Column(Integer)
     provider_track_id = Column(String)
     length = Column(Integer)
+    average_rating = Column(Integer) # Average rating out of 10
 
 Index('track_id', Track.provider, Track.provider_track_id, unique=True)
