@@ -22,8 +22,11 @@
 
   <body>
     <div id="header-row" class="row">
-        <div id="header" class="small-10 small-centered columns end">
+        <div id="header" class="small-11 columns" style="padding-left: 40px;">
             <h1>burst<em>.dj</em></h1>
+        </div>
+        <div class="small-1 columns end" style="padding-top: 40px; margin-right: 0px; margin-left: auto;">
+            <a style="color: white; " href="/logout">sign out</a>
         </div>
     </div>
     <div id="root-row" class="row">
@@ -47,8 +50,7 @@
                             </div>
                         </form>
                         <ul class="no-bullet">
-                            <li>Nicki Minaj</li>
-                            <li>Ke$ha</li>
+                            <li ng-repeat="playlist in playlists track by playlist.id">{{ playlist.name }}</li>
                         </ul>
                         <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
                             <h5>Create</h5>
@@ -57,10 +59,10 @@
                                     <div class="small-12 columns">
                                         <div class="row collapse">
                                             <div class="small-10 columns">
-                                                <input type="text" placeholder="Search...">
+                                                <input type="text" ng-model="query.term" placeholder="Search...">
                                             </div>
                                             <div class="small-2 columns">
-                                                <a href="#" class="button postfix">Search</a>
+                                                <a href="" ng-click="search(query)" class="button postfix">Search</a>
                                             </div>
                                         </div>
                                     </div>
@@ -129,7 +131,7 @@
       // 
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PAUSED) {
-          player.playVideo();
+//          player.playVideo();
         }
       }
       function stopVideo() {
