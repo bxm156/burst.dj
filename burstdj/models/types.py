@@ -1,8 +1,11 @@
-from sqlalchemy.types import TypeDecorator, TEXT
 import simplejson
 
-class JSONEncoded(TypeDecorator):
-    "Represents an immutable structure as a json-encoded string."
+from sqlalchemy.types import TypeDecorator
+from sqlalchemy.types import TEXT
+
+
+class JSONValue(TypeDecorator):
+    "Represents an immutable container as a json-encoded string."
 
     impl = TEXT
 

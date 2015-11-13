@@ -6,7 +6,7 @@
     ], function(angular) {
         angular.module('dj.burst.theater', [    
         ]).controller('TheaterController', ['$scope', function($scope) {
-            $scope.greeting = "Movie";       
+            $scope.greeting = "Mulan feat. Drake";       
         }]);
     });
 })(define);

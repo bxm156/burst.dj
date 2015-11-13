@@ -29,20 +29,35 @@
     <div id="root-row" class="row">
         <div class="small-11 small-centered columns end">
             <div class="row">
-                <div class="small-2 columns">
-                    <h2>Playlists</h2>
-                    <div ng-controller="PlaylistController" ng-cloak>
-                        {{ greeting }}
+                <div class="small-3 columns">
+                    <div id="playlists" ng-controller="PlaylistController" ng-cloak>
+                        <h3>{{ greeting }}</h3>
+                        <form>
+                            <div class="row">
+                                <div class="small-12 columns">
+                                    <div class="row collapse">
+                                        <div class="small-10 columns">
+                                            <input type="text" placeholder="Playlist Name">
+                                        </div>
+                                        <div class="small-2 columns">
+                                            <a href="#" class="button postfix">+</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div> 
                 </div>
-                <div class="small-8 columns">
+                <div class="small-6 columns">
                     <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
-                        {{ greeting }} <br />
+                        <h4>{{ greeting }}</h4>
                         <div id="player"></div>
                     </div> 
                 </div>
-                <div class="small-2 columns">
-                    <h2>Chat Room</h2>
+                <div class="small-3 columns">
+                    <div id="chat">
+                        <h3>Chat</h3>
+                    </div>
                 </div>
             </div>
         <div>
