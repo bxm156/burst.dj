@@ -123,7 +123,7 @@ def get_active_playlist(request):
     playlist = playlist_logic.get_playlist(user_id, user.active_playlist_id)
     if playlist is None:
         return None
-        
+
     tracks = playlist_logic.list_tracks(user_id, playlist_id)
     tracks_info = [
         dict(
