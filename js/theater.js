@@ -64,6 +64,7 @@
                     JoinFactory.save({roomId: roomId}, {}, function(result) {
                         if (result.id) {
                             $scope.roomId = result.id;
+                            $scope.roomName = result.name;
                             $scope.users = result.users;
                             $scope.updateUserDisplay();
 
@@ -86,6 +87,15 @@
                     }
                     else {
                         $scope.joinQueue();
+                    }
+                };
+
+                $scope.updateQueueText = function(isSpinning) {
+                    if (isSpinning) {
+                        $scope.queueActionText = "Leave Queue";
+                    }
+                    else {
+                        $scope.queueActionText = "Join Queue";
                     }
                 };
 
@@ -154,10 +164,23 @@
                         }
                         $scope.track = result.track;
 
-                        // TODO: change audience / queue list
                         $scope.users = result.users;
                         $scope.djs = result.djs;
                         $scope.updateUserDisplay();
+
+                        var isUserSpinning = false;
+                        for (var i = 0; i < $scope.djs.length; i++) {
+                            var dj = $scope.djs[i];
+                            if (dj.id == $scope.user.id) {
+                                isUserSpinning = true;
+                                break;
+                            }
+                        }
+
+                        if ($scope.isSpinning != isUserSpinning) {
+                            $scope.isSpinning = isUserSpinning;
+                            $scope.updateQueueText(isUserSpinning);
+                        }
 
                         $scope.current_dj_id = result.current_dj_id;
                     });

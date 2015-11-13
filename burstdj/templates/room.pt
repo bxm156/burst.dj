@@ -114,11 +114,13 @@
                     </div>
                     <div class="small-3 columns">
                         <div id="dj">
-                            <h3>DJs</h3>
+                            <h3>{{ roomName }}</h3>
                             <div id="dj-list">
                             <ul>
-                                <li ng-repeat="dj in djs">DJ {{ dj.name }}</li>
-                                <ul>
+                                <li ng-repeat="dj in djs">
+                                    <span ng-class="($index==0) ? 'active-dj' : ''">DJ {{ dj.name }}</span>
+                                </li>
+                            </ul>
                             </div>
                             <a href="" ng-click="toggleQueue()" class="button">{{ queueActionText }}</a>
                         </div>
