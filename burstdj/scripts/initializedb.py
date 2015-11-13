@@ -13,6 +13,9 @@ from pyramid.scripts.common import parse_vars
 
 from burstdj.models import DBSession, Base
 from burstdj.models.mymodel import MyModel
+from burstdj.models.user import User
+from burstdj.models.playlist import Playlist
+
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
