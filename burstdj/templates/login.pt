@@ -22,7 +22,7 @@
   </head>
 
   <body>
-    <div class="row">
+    <div id="header-row" class="row">
         <div id="header" class="small-10 small-centered columns end">
             <h1>burst<em>.dj</em></h1>
         </div>
