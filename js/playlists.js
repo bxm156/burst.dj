@@ -30,10 +30,15 @@
                 });
                 $scope.create = function(playlist) {
                     $('#createPlaylist').foundation('reveal','open');
-                }
+                };
                 $scope.edit = function(playlist) {
                     //
-                }
+                };
+                $scope.search = function(query) {
+                    MusicSearchFactory.get({query: query.term}, function(result) {
+                        alert(results);
+                    });
+                };
             }
         ]);
     });
