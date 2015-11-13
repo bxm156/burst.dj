@@ -7,16 +7,19 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from zope.sqlalchemy import ZopeTransactionExtension
 
 
-def get_session():
+def get_session(scoped=False):
     settings = get_appsettings('development.ini')
     engine = engine_from_config(settings, 'sqlalchemy.')
-    Session = scoped_session(sessionmaker(bind=engine, extension=ZopeTransactionExtension()))
+    Session = sessionmaker(bind=engine, extension=ZopeTransactionExtension())
+    if scoped:
+        Session = scoped_session(Session)
+
     return Session()
 
 @contextlib.contextmanager
 def session_context():
     try:
-        session = get_session()
+        session = get_session(scoped=True)
         transaction.begin()
         yield session
         transaction.commit()

@@ -18,6 +18,5 @@ class User(Base):
     name = Column(String)
     avatar_url = Column(String)
     active_playlist_id = Column(Integer, ForeignKey("playlist.id"))
-    playlists = relation("Playlist", backref="user")
 
 Index('user_name', User.name, unique=True, mysql_length=255)
