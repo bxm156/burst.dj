@@ -2,7 +2,7 @@ require([
     'jquery',
     'foundation',
     'foundationReveal',
-    ], function($) {
+    ], function($, foundation, foundationReveal) {
         $(document).ready(function() {
             $(document).foundation();
         });

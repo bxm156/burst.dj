@@ -59,12 +59,15 @@ def post_room(request):
     user_id = security.current_user_id(request)
     try:
         room = room_logic.create_room(name, user_id)
-    except RoomAlreadyExists:
-        raise HTTPConflict()
+        newly_created = True
+    except RoomAlreadyExists as e:
+        room = e[0]
+        newly_created = False
     return dict(
         id=room.id,
         name=room.name,
         time_created=room.time_created.isoformat(),
+        newly_created=newly_created,
     )
 
 @rooms.get()

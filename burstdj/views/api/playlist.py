@@ -98,7 +98,6 @@ def get_active_playlist(request):
         dict(
             id=track.id,
             name=track.name,
-            artist=track.artist,
         )
         for track in tracks
     ]
@@ -108,6 +107,7 @@ def get_active_playlist(request):
         tracks=tracks_info,
     )
 
+
 @active_playlist.post()
 def set_active_playlist(request):
     """Set the active playlist id for a user
@@ -115,13 +115,15 @@ def set_active_playlist(request):
     user_id = request.matchdict['user_id']
     playlist_id = request.json_body.get('playlist_id', None)
 
-    success = playlist_logic.set_user_active_playlist(user_id, playlist_id)
-    if not success:
+    playlist = playlist_logic.set_user_active_playlist(user_id, playlist_id)
+    if not playlist:
         raise HTTPNotFound()
-        
+
     return dict(
-        success=True,
+        id=playlist.id,
+        name=playlist.name,
     )
+
 
 @add_track.post()
 def add_track_to_playlist(request):

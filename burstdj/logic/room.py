@@ -1,5 +1,6 @@
 import datetime
 import logging
+import sys
 from sqlalchemy import desc
 from sqlalchemy.sql.functions import count
 
@@ -16,8 +17,8 @@ log = logging.getLogger('burstdj.room')
 
 
 # for now we'll do this, but we'll want to tighten it
-TRACK_FINISH_BUFFER = 5
-
+TRACK_FINISH_BUFFER = 2
+TRACK_MAX_PLAYTIME = 60
 
 class RoomAlreadyExists(Exception):
     pass
@@ -229,12 +230,18 @@ def current_track(session, room):
     current_time = datetime.datetime.now()
     track = track_logic.load_track_by_id(session, room.current_track_id)
 
+    time_elapsed = current_time - room.time_track_started
+    if time_elapsed.total_seconds() > TRACK_MAX_PLAYTIME:
+        log.info("ending playback of track %s early due to time_elapsed:%s", track.name, time_elapsed)
+        return None
+
     time_track_finished = room.time_track_started + datetime.timedelta(
         seconds=(track.length + TRACK_FINISH_BUFFER)
     )
 
     if current_time > time_track_finished:
         # track's done, so it's now stale
+        log.info("track %s is done", track.name)
         return None
 
     return track
