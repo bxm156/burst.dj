@@ -20,7 +20,8 @@ module.exports = function (grunt) {
                   packageSpecific: {
                       'foundation': {
                           files: [
-                            "js/foundation/foundation.reveal.js"
+                            "js/foundation/foundation.reveal.js",
+                            "js/foundation.js"
                           ]
                       }
                   }

@@ -68,6 +68,9 @@
                                     </div>
                                 </div>
                             </form>
+                            <ul class="no-bullet">
+                                <li ng-repeat="result in search_results">{{ result.title }}</li>
+                            </ul>
                         </div>
                     </div> 
                 </div>

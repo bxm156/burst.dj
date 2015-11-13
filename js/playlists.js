@@ -5,7 +5,8 @@
         'angular',
         'angularResource',
         'jquery',
-    ], function(angular, angularResource, $) {
+        'foundationReveal'
+    ], function(angular, angularResource, $, foundationReveal) {
         angular.module('dj.burst.playlists', [
             'ngResource'
         ]).factory('CurrentUserFactory', function($resource) {
@@ -36,8 +37,21 @@
                 };
                 $scope.search = function(query) {
                     MusicSearchFactory.get({query: query.term}, function(result) {
+                        var results = [];
+                        for (var i = 0; i < result.items.length; i++){
+                            if (result.items[i].id.videoId){
+                                var thingy = {
+                                    thumbnail_url: result.items[i].snippet.thumbnails.default.url,
+                                    title: result.items[i].snippet.title,
+                                    video_id: result.items[i].id.videoId
+                                }
+                                results.push(thingy);
+                            }
+                         }
+                        $scope.search_results = results;
                     });
                 };
+
             }
         ]);
     });
