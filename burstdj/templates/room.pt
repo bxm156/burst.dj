@@ -50,8 +50,7 @@
                             </div>
                         </form>
                         <ul class="no-bullet">
-                            <li>Nicki Minaj</li>
-                            <li>Ke$ha</li>
+                            <li ng-repeat="playlist in playlists track by playlist.id">{{ playlist.name }}</li>
                         </ul>
                         <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
                             <h5>Create</h5>
@@ -60,10 +59,10 @@
                                     <div class="small-12 columns">
                                         <div class="row collapse">
                                             <div class="small-10 columns">
-                                                <input type="text" placeholder="Search...">
+                                                <input type="text" ng-model="query.term" placeholder="Search...">
                                             </div>
                                             <div class="small-2 columns">
-                                                <a href="#" class="button postfix">Search</a>
+                                                <a href="" ng-click="search(query)" class="button postfix">Search</a>
                                             </div>
                                         </div>
                                     </div>
