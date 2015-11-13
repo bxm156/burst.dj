@@ -1,4 +1,5 @@
-from sqlalchemy import func
+from enum import Enum
+
 from sqlalchemy import Column
 from sqlalchemy import Index
 from sqlalchemy import Integer
@@ -8,6 +9,11 @@ from sqlalchemy.sql.functions import now
 
 from burstdj.models import Base
 from burstdj.models import types
+
+
+class TrackProvider(Enum):
+    YOUTUBE = 1
+    SOUNDCLOUD = 2
 
 
 class Track(Base):
