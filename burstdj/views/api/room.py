@@ -4,6 +4,7 @@ from burstdj.core.error import HTTPBadRequest, HTTPConflict, HTTPNotFound, \
 
 from burstdj.logic import security
 from burstdj.logic import room as room_logic
+from burstdj.logic import track as track_logic
 from burstdj.logic.room import RoomAlreadyExists, UserNotInRoom, RoomNotFound
 
 # POST: create a new room
@@ -154,25 +155,12 @@ def get_room_activity(request):
             id=room_id,
             name=room.name,
         ),
-        track=serialize_track(track, time_started=room.time_track_started),
+        track=track_logic.serialize_track(track, time_started=room.time_track_started),
         users=serialize_users(users),
         djs=serialize_users(djs),
         current_dj_id=room.current_user_id,
     )
 
-
-def serialize_track(track, time_started=None):
-    if track is None:
-        return None
-    time_started = None if time_started is None else time_started.isoformat()
-    return dict(
-        id=track.id,
-        name=track.name,
-        provider_track_id=track.provider_track_id,
-        provider=track.provider,
-        time_started=time_started,
-        length=track.length,
-    )
 
 def serialize_users(users):
     return [serialize_user(user) for user in users]

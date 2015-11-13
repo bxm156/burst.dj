@@ -1,7 +1,6 @@
-from apiclient.discovery import build
-
 from cornice import Service
 
+from burstdj.logic import youtube
 
 search_activity = Service(
     name='music_search',
@@ -9,26 +8,22 @@ search_activity = Service(
     permission='authenticated',
 )
 
-
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
+track_info = Service(
+    name='track_info',
+    path='/api/track_info/{provider}/{provider_track_id}',
+    permission='authenticated',
+)
 
 
 @search_activity.get()
 def get_search_activity(request):
     search_string = str(request.matchdict['search_string'])
+    limit = request.params.get('limit', 15)
+    return youtube.search(search_string, limit=limit)
 
-    with open('./api_key') as api_file:
-        api_key = api_file.read().rstrip('\n')
 
-    youtube = build(
-        YOUTUBE_API_SERVICE_NAME,
-        YOUTUBE_API_VERSION,
-        developerKey=api_key
-    )
-
-    return youtube.search().list(
-        q=search_string,
-        part="id,snippet",
-        maxResults=15,
-    ).execute()
+@track_info.get()
+def get_track_info(request):
+    provider = str(request.matchdict['provider'])
+    provider_track_id = str(request.matchdict['provider_track_id'])
+    return youtube.video_info(provider_track_id)
