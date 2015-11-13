@@ -98,7 +98,9 @@
                             <div class="row">
                                 <h4>{{ greeting }}</h4>
                             </div>
-
+                            <div class="row">
+                                <img ng-src="/static/resources/star_rating/{{rating_img}}"/>
+                            </div>
                             <div class="row">
                                 <div class="small-12 columns">
                                     <!-- DO NOT CHANGE UNTIL YOU CAN ADD A TOGGLE -->
@@ -154,8 +156,8 @@
             height: '390',
             width: '640',
 
-            // TODO: Fetch 'videoId' dynamically
-            videoId: 'j9MfuWSQoWc',
+//            // TODO: Fetch 'videoId' dynamically
+//            videoId: 'j9MfuWSQoWc',
 
             // TODO: Make 'start' dynamically load the starting time
             // controls=0 disables player controls
@@ -175,7 +177,7 @@
         // 4. The API will call this function when the video player is ready.
         function onPlayerReady(event) {
             event.target.setVolume(100);
-            event.target.playVideo();
+//            event.target.playVideo();
         }
 
         //
