@@ -19,6 +19,9 @@ GROUPS = {
 }
 
 
+def is_request_authenticated(request):
+    return bool(request.authenticated_userid)
+
 def groupfinder(userid, request):
     """This is where we'd verify the user exists.  return None if not."""
     if userid in USERS:
