@@ -4,7 +4,8 @@
     define([
         'angular',
         'angularResource',
-    ], function(angular, angularResource) {
+        'jquery',
+    ], function(angular, angularResource, $) {
         angular.module('dj.burst.playlists', [
             'ngResource'
         ]).factory('CurrentUserFactory', function($resource) {
@@ -27,6 +28,12 @@
                     $scope.greeting = user.name + "'s playlists";
                     $scope.playlists = PlaylistFactory.get({userId:user.id});
                 });
+                $scope.create = function(playlist) {
+                    $('#createPlaylist').foundation('reveal','open');
+                }
+                $scope.edit = function(playlist) {
+                    //
+                }
             }
         ]);
     });

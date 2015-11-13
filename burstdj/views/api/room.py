@@ -1,7 +1,9 @@
-from collections import defaultdict
 from cornice import Service
+from burstdj.core.error import HTTPBadRequest, HTTPConflict
 
 from burstdj.logic import security
+from burstdj.logic import room as room_logic
+from burstdj.logic.room import RoomAlreadyExists
 
 rooms = Service(
     name='rooms',
@@ -16,8 +18,14 @@ room = Service(
 )
 
 room_join = Service(
-    name='room',
+    name='room_join',
     path='/api/room/{room_id}/join',
+    permission='authenticated',
+)
+
+queue_join = Service(
+    name='room_queue_join',
+    path='/api/room/{room_id}/queue/join',
     permission='authenticated',
 )
 
@@ -27,13 +35,22 @@ room_activity = Service(
     permission='authenticated',
 )
 
-_USERS = defaultdict(dict)
-
 
 @rooms.post()
 def post_room(request):
+    name = request.json_body.get('name', None)
+    if name is None:
+        raise HTTPBadRequest()
     user_id = security.current_user_id(request)
-    pass
+    try:
+        room = room_logic.create_room(name, user_id)
+    except RoomAlreadyExists:
+        raise HTTPConflict()
+    return dict(
+        id=room.id,
+        name=room.name,
+        time_created=room.time_created.isoformat(),
+    )
 
 @rooms.get()
 def list_rooms(request):
@@ -41,6 +58,10 @@ def list_rooms(request):
 
 @room_join.post()
 def join_room(request):
+    pass
+
+@queue_join.post()
+def join_queue(request):
     pass
 
 @room_activity.get()
