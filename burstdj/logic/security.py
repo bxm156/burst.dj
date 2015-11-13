@@ -36,6 +36,10 @@ def lookup_user_by_id(user_id):
     session = db.get_session()
     return session.query(User).filter(User.id == user_id).first()
 
+def list_users():
+    session = db.get_session()
+    return session.query(User).all()
+
 
 def get_current_user(request):
     user_id = current_user_id(request)

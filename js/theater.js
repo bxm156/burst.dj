@@ -77,7 +77,7 @@
                 };
 
                 $scope.startActivityLoop = function() {
-                    $interval($scope.updateActivity, 5000);
+                    $interval($scope.updateActivity, 2000);
                 };
 
                 $scope.toggleQueue = function() {
@@ -124,10 +124,24 @@
                     ActivityFactory.get({roomId: $scope.roomId}, function(result) {
 
                         // TODO: change the player if current track is different
-                        if (result.track) {
-                            $scope.greeting = result.track.name;
+                        var currentTrack = $scope.track;
+                        var latestTrack = result.track;
+                        if (latestTrack) {
+                            if (!currentTrack
+                                || latestTrack.id != currentTrack.id
+                                || latestTrack.time_started != currentTrack.time_started) {
+                                // new shit
+                                $scope.greeting = latestTrack.name;
+                                $scope.track = latestTrack;
+                                // TODO: offset if we're joining party late
+                                player.loadVideoById({videoId: latestTrack.provider_track_id});
+                            }
+                            else {
+                                // same shit
+                            }
                         }
                         else {
+                            // stop playing!
                             $scope.greeting = "Silence is golden";
                         }
                         $scope.track = result.track;
