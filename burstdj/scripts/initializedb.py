@@ -12,9 +12,10 @@ from pyramid.paster import (
 from pyramid.scripts.common import parse_vars
 
 from burstdj.models import DBSession, Base
-from burstdj.models.mymodel import MyModel
 from burstdj.models.user import User
 from burstdj.models.playlist import Playlist
+from burstdj.models.track import Track
+
 
 
 def usage(argv):
@@ -34,6 +35,3 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
-    with transaction.manager:
-        model = MyModel(name='one', value=1)
-        DBSession.add(model)
