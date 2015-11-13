@@ -2,6 +2,8 @@ from cornice import Service
 from burstdj.core.error import HTTPBadRequest, HTTPConflict, HTTPNotFound
 from burstdj.logic import security
 from burstdj.logic import playlist as playlist_logic
+from burstdj.logic import track as track_logic
+from burstdj.logic.playlist import TrackNotFound
 
 playlists = Service(
     name='playlists',
@@ -74,17 +76,10 @@ def get_playlist(request):
     if not playlist:
         return None
     tracks = playlist_logic.list_tracks(user_id, playlist_id)
-    tracks_info = [
-        dict(
-            id=track.id,
-            name=track.name,
-        )
-        for track in tracks
-    ]
     return dict(
         id=playlist.id,
         name=playlist.name,
-        tracks=tracks_info,
+        tracks=track_logic.serialize_tracks(tracks),
     )
 
 @active_playlist.get()
@@ -138,25 +133,23 @@ def add_track_to_playlist(request):
     user_id = request.matchdict['user_id']
     playlist_id = request.matchdict['playlist_id']
 
-    name = request.json_body.get('name', None)
     provider = request.json_body.get('provider', None)
     provider_track_id = request.json_body.get('provider_track_id', None)
-    length = request.json_body.get('length', None)
 
     if (
-        name is None or
         provider is None or
-        provider_track_id is None or
-        length is None
+        provider_track_id is None
     ):
         raise HTTPBadRequest()
 
-    success = playlist_logic.add_track(
-        user_id,
-        playlist_id,
-        name,
-        provider,
-        provider_track_id,
-        length,
-    )
+    try:
+        success = playlist_logic.add_track(
+            user_id,
+            playlist_id,
+            provider,
+            provider_track_id,
+        )
+    except TrackNotFound:
+        raise HTTPBadRequest()
+
     return dict(success=success)

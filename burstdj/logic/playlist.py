@@ -4,9 +4,14 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
 from burstdj.db import session_context
+from burstdj.logic import youtube
 from burstdj.models.playlist import Playlist
 from burstdj.models.track import Track
 from burstdj.models.user import User
+
+
+class TrackNotFound(Exception):
+    pass
 
 
 def get_user(user_id):
@@ -62,8 +67,14 @@ def _get_playlist(session, user_id, playlist_id):
         return None
     return playlist
 
-def add_track(user_id, playlist_id, name, provider, provider_track_id, length_in_seconds):
-    track_id = _load_or_create_track(name, provider, provider_track_id, length_in_seconds)
+def add_track(user_id, playlist_id, provider, provider_track_id):
+    track_info = youtube.video_info(provider_track_id)
+    if track_info is None:
+        raise TrackNotFound()
+    name = track_info['title']
+    length = track_info['length']
+
+    track_id = _load_or_create_track(name, provider, provider_track_id, length)
     with session_context() as session:
         playlist = _get_playlist(session, user_id, playlist_id)
         if playlist is None:

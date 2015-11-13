@@ -9,6 +9,7 @@ argparse==1.4.0
 cornice==1.1.0
 enum==0.4.6
 google-api-python-client==1.4.2
+isodate==0.5.4
 linecache2==1.0.0
 nodeenv==0.13.6
 ordereddict==1.1
