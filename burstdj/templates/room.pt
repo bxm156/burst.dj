@@ -81,7 +81,15 @@
                         </div>
                         <!-- Listing the tracks of a playlist here  -->
                         <div id="playlistTracks" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                        <div class="row">
+                          <div class="small-3 columns">
                             <h5><a href="" ng-click="activate(showPlaylist)"> Activate playlist {{ playlistTitle }} </a></h5>
+                          </div>
+                          <div class="small-3 columns">
+                            <a href="" ng-click="add(playlist)" class="button postfix">Add Track</a>
+                          </div>
+                        </div>
+                            
                             <div id="tracklist">
                                 <ul class="accordion no-bullet" data-accordion>
                                     <li class="accordion-navigation" ng-repeat="track in playlistTracks">
