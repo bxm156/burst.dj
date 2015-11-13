@@ -3,6 +3,8 @@ require([
     'foundation',
     'foundationReveal',
     ], function($) {
-        $(document).foundation();
+        $(document).ready(function() {
+            $(document).foundation();
+        });
     }
 );
