@@ -48,6 +48,18 @@ h2 {
     color: $white;
 }
 
+#search-results {
+    color: $black;
+}
+
+#chat-room {
+    background-color: $black;
+}
+
+#chat-messages {
+    min-height: 25rem;
+}
+
 /* Angular JS Hacks */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;

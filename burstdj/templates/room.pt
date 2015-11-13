@@ -51,7 +51,7 @@
                         </form>
                         <ul class="no-bullet">
                             <li ng-repeat="playlist in playlists track by playlist.id">
-                            <a href="" ng-click="edit(playlist)">{{ playlist.name }}</a>
+                            <a href="" ng-click="activate(playlist)">{{ playlist.name }}</a>
                             </li>
                         </ul>
                         <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
@@ -70,9 +70,11 @@
                                     </div>
                                 </div>
                             </form>
-                            <ul class="no-bullet">
-                                <li ng-repeat="result in search_results">{{ result.title }}</li>
-                            </ul>
+                            <div id="search-results">
+                                <ul class="no-bullet">
+                                    <li ng-repeat="result in search_results">{{ result.title }}</li>
+                                </ul>
+                            </div>
                         </div>
                     </div> 
                 </div>
@@ -85,6 +87,23 @@
                 <div class="small-3 columns">
                     <div id="chat">
                         <h3>Chat</h3>
+                        <div id="chat-room">
+                            <div id="chat-messages"></div>
+                        </div>
+                        <form>
+                            <div class="row">
+                                <div class="small-12 columns">
+                                    <div class="row collapse">
+                                        <div class="small-10 columns">
+                                            <input type="text" placeholder="Message..."></input>
+                                        </div>
+                                        <div class="small-2 columns">
+                                            <a href="" class="button postfix">Send</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
