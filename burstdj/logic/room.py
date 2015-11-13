@@ -143,15 +143,16 @@ def join_room(room_id, user_id):
         if not _does_room_exist(session, room_id):
             raise RoomNotFound()
 
-        _leave_rooms(session, user_id)
+        if not _is_user_in_room(session, room_id, user_id):
+            _leave_rooms(session, user_id)
 
-        # join room
-        room_user = RoomUser(
-            room_id=room_id,
-            user_id=user_id,
-        )
-        session.add(room_user)
-        session.flush()
+            # join room
+            room_user = RoomUser(
+                room_id=room_id,
+                user_id=user_id,
+            )
+            session.add(room_user)
+            session.flush()
 
         room = session.query(Room).filter(Room.id == room_id).first()
 
