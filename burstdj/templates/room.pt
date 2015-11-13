@@ -46,6 +46,27 @@
                                 </div>
                             </div>
                         </form>
+                        <ul class="no-bullet">
+                            <li>Nicki Minaj</li>
+                            <li>Ke$ha</li>
+                        </ul>
+                        <div id="createPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                            <h5>Create</h5>
+                            <form>
+                                <div class="row">
+                                    <div class="small-12 columns">
+                                        <div class="row collapse">
+                                            <div class="small-10 columns">
+                                                <input type="text" placeholder="Search...">
+                                            </div>
+                                            <div class="small-2 columns">
+                                                <a href="#" class="button postfix">Search</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div> 
                 </div>
                 <div class="small-6 columns">
@@ -61,7 +82,7 @@
                 </div>
             </div>
         <div>
-    </div>
+        </div>
     <script src="${request.static_url('burstdj:static/requirejs/require.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/require-config.js')}"></script>
     <script src="${request.static_url('burstdj:static/js/site.js')}"></script>
