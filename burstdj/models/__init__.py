@@ -13,6 +13,8 @@ from sqlalchemy.orm import (
     relation,
     )
 
+from sqlalchemy.types import DateTime, String
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
