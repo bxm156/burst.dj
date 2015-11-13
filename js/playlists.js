@@ -16,14 +16,17 @@
                     userId: '@userId',
                     id: '@id',
             });
+        }).factory('TrackFactory', function($resource) {
+            return $resource('/api/user/:userId/playlist/:playlistId/add_track');
         }).factory('MusicSearchFactory', function($resource) {
             return $resource('/api/music_search/:query');
         }).controller('PlaylistController', [
             '$scope',
             'CurrentUserFactory',
             'PlaylistFactory',
+            'TrackFactory',
             'MusicSearchFactory',
-            function($scope, CurrentUserFactory, PlaylistFactory, MusicSearchFactory) {
+            function($scope, CurrentUserFactory, PlaylistFactory, TrackFactory, MusicSearchFactory) {
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
                     $scope.greeting = user.name + "'s playlists";
@@ -33,12 +36,12 @@
                     PlaylistFactory.save({
                         userId: $scope.user.id,
                         name: $playlist.name,
-                    }, function(playlist) {
-                        $scope.createPlaylistTitle = "Playlist: " + $playlist.name;
+                    }, function($playlist) {
+                        $scope.createPlaylistTitle = "New Playlist: " + $playlist.name;
                         $scope.new_playlist = $playlist;
                         $('#createPlaylist').foundation('reveal','open');
-                        PlaylistFactory.query({userId:user.id}, function(playlists) {
-                            $scope.playlists = playlists;  
+                        PlaylistFactory.query({userId:user.id}, function($playlists) {
+                            $scope.playlists = $playlists;
                         });
                     });
                 };
@@ -47,6 +50,16 @@
                 };
                 $scope.activate = function($playlist) {
 
+                };
+                $scope.addToPlaylist = function($playlist, $video_id) {
+                    TrackFactory.save({
+                        userId: $scope.user.id,
+                        playlistId: $playlist.id
+                    }, {
+                        provider_track_id: $video_id,
+                        provider: 'youtube',
+                        name: 'test'
+                    });
                 };
                 $scope.search = function($query) {
                     MusicSearchFactory.get({query: $query.term}, function(result) {

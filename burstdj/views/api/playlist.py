@@ -43,8 +43,10 @@ def create_playlist(request):
     playlist_id = playlist_logic.create_playlist(user_id, name)
 
     return dict(
-        playlist_id=playlist_id,
+        id=playlist_id,
+        name=name,
     )
+
 
 @playlists.get()
 def list_playlists(request):
