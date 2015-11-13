@@ -21,7 +21,7 @@
             function($scope, CurrentUserFactory, PlaylistFactory) {
                 var user = CurrentUserFactory.get({}, function() {
                     $scope.user = user;
-                    $scope.greeting = user.name + "'s Playlists";
+                    $scope.greeting = user.name + "'s playlists";
                 });
                 PlaylistFactory.get({userId:1, id:2});
             }

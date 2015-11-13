@@ -30,18 +30,20 @@
         <div class="small-11 small-centered columns end">
             <div class="row">
                 <div class="small-3 columns">
-                    <div ng-controller="PlaylistController" ng-cloak>
+                    <div id="playlists" ng-controller="PlaylistController" ng-cloak>
                         <h3>{{ greeting }}</h3>
                     </div> 
                 </div>
                 <div class="small-6 columns">
                     <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
-                        {{ greeting }} <br />
+                        <h4>{{ greeting }}</h4>
                         <div id="player"></div>
                     </div> 
                 </div>
                 <div class="small-3 columns">
-                    <h2>Chat Room</h2>
+                    <div id="chat">
+                        <h3>Chat</h3>
+                    </div>
                 </div>
             </div>
         <div>
