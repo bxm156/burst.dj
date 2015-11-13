@@ -5,7 +5,7 @@ from burstdj.logic import security
 from burstdj.logic import playlist as playlist_logic
 
 playlists = Service(
-    name='playlist',
+    name='playlists',
     path='/api/user/{user_id}/playlist',
     permission='authenticated',
 )
@@ -13,6 +13,12 @@ playlists = Service(
 playlist = Service(
     name='playlist',
     path='/api/user/{user_id}/playlist/{playlist_id}',
+    permission='authenticated',
+)
+
+active_playlist = Service(
+    name='active_playlist',
+    path='/api/user/{user_id}/active_playlist',
     permission='authenticated',
 )
 
@@ -60,6 +66,32 @@ def get_playlist(request):
     playlist = playlist_logic.get_playlist(user_id, playlist_id)
     if not playlist:
         return None
+    tracks = playlist_logic.list_tracks(user_id, playlist_id)
+    tracks_info = [
+        dict(
+            id=track.id,
+            name=track.name,
+            artist=track.artist,
+        )
+        for track in tracks
+    ]
+    return dict(
+        id=playlist.id,
+        name=playlist.name,
+        tracks=tracks_info,
+    )
+
+@active_playlist.get()
+def get_active_playlist(request):
+    """Shows active playlist id for a user
+    """
+    user_id = request.matchdict['user_id']
+
+    user = playlist_logic.get_user(user_id)
+    playlist = playlist_logic.get_playlist(user_id, user.active_playlist_id)
+    if playlist is None:
+        return None
+        
     tracks = playlist_logic.list_tracks(user_id, playlist_id)
     tracks_info = [
         dict(
