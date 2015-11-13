@@ -36,7 +36,7 @@
                     </div> 
                 </div>
                 <div class="small-8 columns">
-                    <div id="theater" ng-controller="TheaterController" ng-cloak>
+                    <div id="theater" class="text-center" ng-controller="TheaterController" ng-cloak>
                         {{ greeting }} <br />
                         <div id="player"></div>
                     </div> 
