@@ -1,11 +1,17 @@
+import datetime
 from sqlalchemy import desc
 from sqlalchemy.sql.functions import count
 
 from burstdj import db
+from burstdj.logic import track as track_logic
 from burstdj.models.room import Room
 from burstdj.models.room_queue import RoomQueue
 from burstdj.models.room_user import RoomUser
 from burstdj.models.user import User
+
+
+# for now we'll do this, but we'll want to tighten it
+TRACK_FINISH_BUFFER = 5
 
 
 class RoomAlreadyExists(Exception):
@@ -86,19 +92,31 @@ def list_room_users(room_id):
         ).all()
 
 
+def _list_room_djs(session, room_id):
+    return session.query(
+        User
+    ).join(
+        RoomQueue
+    ).filter(
+        RoomQueue.room_id == room_id
+    ).order_by(
+        RoomQueue.time_created,
+        RoomQueue.id,
+    ).all()
+
 def list_room_djs(room_id):
     with db.session_context() as session:
-        return session.query(
-            User
-        ).join(
-            RoomQueue
-        ).filter(
-            RoomQueue.room_id == room_id
-        ).order_by(
-            RoomQueue.time_created,
-            RoomQueue.id,
-        ).all()
+        return _list_room_djs(session, room_id)
 
+def get_room(room_id):
+    with db.session_context() as session:
+        return _get_room(session, room_id)
+
+def _get_room(session, room_id):
+    room = session.query(Room).filter(Room.id == room_id).first()
+    if room is None:
+        raise RoomNotFound()
+    return room
 
 def join_room(room_id, user_id):
     with db.session_context() as session:
@@ -182,9 +200,40 @@ def leave_queue(room_id, user_id):
         return bool(rows_deleted)
 
 
-def get_current_track(room_id):
+def current_track(session, room):
+    if not room.current_track_id:
+        return None
+
+    current_time = datetime.datetime.now()
+    track = track_logic.load_track_by_id(session, room.current_track_id)
+
+    time_track_finished = room.time_track_started + datetime.timedelta(
+        seconds=(track.length + TRACK_FINISH_BUFFER)
+    )
+
+    if current_time > time_track_finished:
+        # track's done, so it's now stale
+        return None
+
+    return track
+
+
+def choose_next_track(session, room_id):
     pass
 
+
+def get_current_room_track(room_id):
+    """
+    :rtype: Track
+    """
+    with db.session_context() as session:
+        room = _get_room(session, room_id)
+        track = current_track(session, room)
+        if not track:
+            track = choose_next_track(session, room_id)
+
+    room.track = track
+    return room
 
 def get_room_info(room_id):
     pass

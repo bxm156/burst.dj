@@ -139,7 +139,9 @@ def get_room_activity(request):
     """
     room_id = request.matchdict['room_id']
 
-    # TODO: fetch current track for room
+    # TODO: fetch current track for room.  this needs to be fleshed out
+    room = room_logic.get_current_room_track(room_id)
+    track = room.track
 
     # fetch users in room, in order of joining
     users = room_logic.list_room_users(room_id)
@@ -148,12 +150,26 @@ def get_room_activity(request):
     djs = room_logic.list_room_djs(room_id)
 
     return dict(
-        room_id=room_id,
-        current_track=None,
+        room=dict(
+            id=room_id,
+            name=room.name,
+        ),
+        track=serialize_track(track),
         users=serialize_users(users),
         djs=serialize_users(djs),
     )
 
+
+def serialize_track(track):
+    if track is None:
+        return None
+    return dict(
+        id=track.id,
+        name=track.name,
+        provider_id=track.provider_id,
+        provider=track.provider,
+        time_started=track.time_started,
+    )
 
 def serialize_users(users):
     return [serialize_user(user) for user in users]
