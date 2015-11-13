@@ -56,16 +56,32 @@ def post_room(request):
 def list_rooms(request):
     rooms = room_logic.list_rooms()
     return [
-        dict(id=room.id, name=room.name) for room in rooms
+        dict(id=room.id, name=room.name, user_count=room.user_count) for room in rooms
     ]
 
 @room_join.post()
 def join_room(request):
-    pass
+    room_id = request.matchdict['room_id']
+    try:
+        room_id = int(room_id)
+    except:
+        raise HTTPBadRequest()
+    user_id = security.current_user_id(request)
+    room = room_logic.join_room(room_id, user_id)
+    return dict(
+        id=room.id,
+        name=room.name,
+        users=[
+            dict(id=user.id, name=user.name, avatar=user.avatar_url)
+            for user in room.users
+        ]
+    )
+
 
 @queue_join.post()
 def join_queue(request):
     pass
+
 
 @room_activity.get()
 def get_room_activity(request):
