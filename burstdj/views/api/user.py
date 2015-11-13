@@ -8,19 +8,7 @@ from cornice import Service
 
 from burstdj.logic import security
 
-info_desc = """\
-This service is useful to get and set data for a user.
-
-NOTE: this is just a dummy service to demonstrate how to do services
-"""
-
 current_user = Service(name='current_user', path='/api/current_user', permission='authenticated')
-
-
-user_info = Service(name='users', path='/user/{username}/info',
-                    description=info_desc)
-
-_USERS = defaultdict(dict)
 
 
 @current_user.get()
@@ -31,32 +19,6 @@ def get_current_user(request):
         name=user.name,
         avatar=user.avatar_url,
     )
-
-
-@user_info.get()
-def get_info(request):
-    """Returns the public information about a **user**.
-
-    If the user does not exists, returns an empty dataset.
-    """
-    username = request.matchdict['username']
-    return _USERS[username]
-
-
-@user_info.post()
-def set_info(request):
-    """Set the public information for a **user**.
-
-    You have to be that user, and *authenticated*.
-
-    Returns *True* or *False*.
-    """
-    username = authenticated_userid(request)
-    if request.matchdict["username"] != username:
-        raise Forbidden()
-    _USERS[username] = request.json_body
-    return {'success': True}
-
 
 @view_config(route_name="whoami", permission="authenticated", renderer="json")
 def whoami(request):

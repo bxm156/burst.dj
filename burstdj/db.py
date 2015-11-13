@@ -10,15 +10,23 @@ from zope.sqlalchemy import ZopeTransactionExtension
 def get_session():
     settings = get_appsettings('development.ini')
     engine = engine_from_config(settings, 'sqlalchemy.')
-    Session = scoped_session(sessionmaker(bind=engine, extension=ZopeTransactionExtension()))
+    Session = scoped_session(
+        sessionmaker(
+            bind=engine,
+            expire_on_commit=False,  # god damn DetachedInstanceError
+        )
+    )
     return Session()
+
 
 @contextlib.contextmanager
 def session_context():
+    session = None
     try:
         session = get_session()
-        transaction.begin()
         yield session
-        transaction.commit()
+        session.commit()
     except:
-        transaction.abort()
+        if session is not None:
+            session.rollback()
+        raise

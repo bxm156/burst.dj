@@ -15,6 +15,9 @@ from burstdj.models import DBSession, Base
 from burstdj.models.mymodel import MyModel
 from burstdj.models.user import User
 from burstdj.models.playlist import Playlist
+from burstdj.models.room import Room
+from burstdj.models.room_queue import RoomQueue
+from burstdj.models.room_user import RoomUser
 
 
 def usage(argv):
