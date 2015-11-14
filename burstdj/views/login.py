@@ -20,19 +20,21 @@ class LoginViews:
             referrer = '/'  # never use login form itself as came_from
         came_from = request.params.get('came_from', referrer)
         message = ''
-        login = ''
+        username = ''
         password = ''
 
-        if 'form.submitted' in request.params:  #dafuq
-            username = request.params['login']
-            password = request.params['password']
+        if request.method == 'POST':
+            username = request.params.get('username', None)
+            headers = None
 
-            headers = security.authenticate_user(request, username)
+            if username:
+                headers = security.authenticate_user(request, username)
             if headers:
                 return HTTPFound(
                     location='/room',
                     headers=headers,
                 )
+
             message = 'Failed login'
 
         return dict(
@@ -40,6 +42,6 @@ class LoginViews:
             message=message,
             url=request.application_url + '/login',
             came_from=came_from,
-            login=login,
+            username=username,
             password=password,
         )

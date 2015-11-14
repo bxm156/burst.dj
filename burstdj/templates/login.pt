@@ -42,10 +42,10 @@
         </div>
         <div class="row">
             <div class="small-4 small-centered columns">
-                <label for="login">Username
-                    <input type="text" id="login"
-                           name="login"
-                           value="${login}"/>
+                <label for="username">Username
+                    <input type="text" id="username"
+                           name="username"
+                           value="${username}"/>
                 </label>
             </div>
         </div>
