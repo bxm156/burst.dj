@@ -2,6 +2,7 @@ import datetime
 import logging
 import sys
 from sqlalchemy import desc
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.functions import count
 
 from burstdj import db
@@ -19,6 +20,7 @@ log = logging.getLogger('burstdj.room')
 # for now we'll do this, but we'll want to tighten it
 TRACK_FINISH_BUFFER = 2
 TRACK_MAX_PLAYTIME = sys.maxint
+
 
 class RoomAlreadyExists(Exception):
     pass
@@ -49,13 +51,13 @@ def list_rooms(limit=20, offset=0):
     with db.session_context() as session:
         results = session.query(
             Room,
-            (count(RoomUser.id)),
+            (count(RoomUser.user_id)),
         ).outerjoin(
             RoomUser
         ).group_by(
             Room
         ).order_by(
-            desc(count(RoomUser.id)),
+            desc(count(RoomUser.user_id)),
             Room.name,
         ).limit(
             limit
@@ -94,7 +96,7 @@ def list_room_users(room_id):
             RoomUser.room_id == room_id
         ).order_by(
             RoomUser.time_created,
-            RoomUser.id,
+            RoomUser.user_id,
         ).all()
 
 
@@ -107,7 +109,7 @@ def _query_room_djs(session, room_id):
         RoomQueue.room_id == room_id
     ).order_by(
         RoomQueue.time_created,
-        RoomQueue.id,
+        RoomQueue.user_id,
     )
 
 def _list_room_djs(session, room_id):
@@ -167,7 +169,7 @@ def _does_room_exist(session, room_id):
 def _is_user_in_room(session, room_id, user_id):
     return bool(
         session.query(
-            count(RoomUser.id)
+            count(RoomUser.user_id)
         ).filter(
             RoomUser.user_id == user_id,
             RoomUser.room_id == room_id
@@ -177,7 +179,7 @@ def _is_user_in_room(session, room_id, user_id):
 def _is_user_in_queue(session, room_id, user_id):
     return bool(
         session.query(
-            count(RoomQueue.id)
+            count(RoomQueue.user_id)
         ).filter(
             RoomQueue.user_id == user_id,
             RoomQueue.room_id == room_id
@@ -197,19 +199,18 @@ def _add_user_to_queue(session, room_id, user_id):
 def join_queue(room_id, user_id):
     log_context = dict(action='join_queue', room_id=room_id, user_id=user_id)
     with db.session_context() as session:
-        if not _does_room_exist(session, room_id):
-            log.info("room does not exist %s", log_context)
-            raise RoomNotFound()
         if not _is_user_in_room(session, room_id, user_id):
             log.info("user not in room %s", log_context)
             raise UserNotInRoom()
 
-        if _is_user_in_queue(session, room_id, user_id):
+        try:
+            _add_user_to_queue(session, room_id, user_id)
+            log.info("added user to queue %s", log_context)
+        except IntegrityError:
+            session.rollback()
             log.info("user already in queue %s", log_context)
             return False
 
-        _add_user_to_queue(session, room_id, user_id)
-        log.info("added user to queue %s", log_context)
         return True
 
 
@@ -277,7 +278,7 @@ def _first_queue_entry(session, room):
         RoomQueue.room_id == room.id
     ).order_by(
         RoomQueue.time_created,
-        RoomQueue.id,
+        RoomQueue.user_id,
     ).first()
 
 
@@ -332,6 +333,8 @@ def get_current_room_track(room_id):
     """
     log_context = dict(action='get_current_room_track', room_id=room_id)
     with db.session_context() as session:
+        # this select for update isn't gonna do shit.  as a result we have
+        # a race condition
         room = _get_room(session, room_id, for_update=True)
         track = current_track(session, room)
         if track:

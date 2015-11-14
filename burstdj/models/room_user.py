@@ -6,8 +6,7 @@ from burstdj.models.user import User
 
 class RoomUser(Base):
     __tablename__ = 'room_user'
-    id = Column(Integer, primary_key=True)
     time_created = Column(DateTime, default=now())
-    room_id = Column(Integer, ForeignKey(Room.id))
-    user_id = Column(Integer, ForeignKey(User.id))
+    room_id = Column(Integer, ForeignKey(Room.id), primary_key=True)
+    user_id = Column(Integer, ForeignKey(User.id), primary_key=True)
     last_ping_time = Column(DateTime, default=now())
