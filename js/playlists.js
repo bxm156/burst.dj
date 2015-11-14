@@ -56,6 +56,12 @@
                         });
                     });
                 };
+                $scope.add = function($playlist) {
+                        $('#editPlaylist').foundation('reveal','open');
+                        PlaylistFactory.query({userId:user.id}, function($playlists) {
+                            $scope.playlists = $playlists;
+                        });
+                };
                 $scope.edit = function($playlist) {
                     ListPlaylistTrackFactory.get({
                         userId: $scope.user.id,
@@ -63,6 +69,7 @@
                     }, function(result) {
                         $scope.showPlaylist = result
                         $scope.playlistTitle = $playlist.name
+                        $scope.playlist_to_edit = $playlist
 
                         var tracks = []
                         for (var i = 0; i < result.tracks.length; i++){

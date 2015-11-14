@@ -65,6 +65,13 @@ h2 {
     overflow-y: auto;
 }
 
+#e-search-results {
+    color: $black;
+    max-height: 500px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .disabled-result {
     color: grey;
 }

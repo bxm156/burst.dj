@@ -79,6 +79,30 @@
                                 </ul>
                             </div>
                         </div>
+                        <div id="editPlaylist" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                            <h5>{{ editPlaylistTitle }}</h5>
+                            <form ng-submit="search(query)">
+                                <div class="row">
+                                    <div class="small-12 columns">
+                                        <div class="row collapse">
+                                            <div class="small-10 columns">
+                                                <input id="e-search-input" type="text" ng-model="query.term" placeholder="Search...">
+                                            </div>
+                                            <div class="small-2 columns">
+                                                <a href="" ng-click="search(query)" class="button postfix">Search</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div id="e-search-results">
+                                <ul class="accordion no-bullet" data-accordion>
+                                    <li class="accordion-navigation" ng-repeat="result in search_results" ng-click="addToPlaylist($event, playlist_to_edit, result.video_id)">
+                                        <img class="thumbnail" ng-src="{{ result.thumbnail_url }}"> {{ result.title }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                         <!-- Listing the tracks of a playlist here  -->
                         <div id="playlistTracks" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
                         <div class="row">
