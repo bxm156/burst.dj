@@ -142,9 +142,10 @@ def get_room_activity(request):
     (most important) and the room's users.
     """
     room_id = request.matchdict['room_id']
+    user_id = security.current_user_id(request)
 
-    # TODO: fetch current track for room.  this needs to be fleshed out
-    room = room_logic.get_current_room_track(room_id)
+    # fetch current track for room.
+    room = room_logic.get_current_room_track(room_id, user_id)
     track = room.track
 
     # fetch users in room, in order of joining

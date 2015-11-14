@@ -1,6 +1,7 @@
 import datetime
 import logging
 import sys
+import time
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.functions import count
@@ -9,7 +10,7 @@ from burstdj import db
 from burstdj.logic import track as track_logic
 from burstdj.logic import playlist as playlist_logic
 from burstdj.models.room import Room
-from burstdj.models.room_queue import RoomQueue
+from burstdj.models.room_queue import RoomQueue, RoomQueueLock
 from burstdj.models.room_user import RoomUser
 from burstdj.models.user import User
 
@@ -21,6 +22,7 @@ log = logging.getLogger('burstdj.room')
 TRACK_FINISH_BUFFER = 2
 TRACK_MAX_PLAYTIME = sys.maxint
 
+QUEUE_LOCK_TIMEOUT = 5
 
 class RoomAlreadyExists(Exception):
     pass
@@ -239,6 +241,9 @@ def leave_queue(room_id, user_id):
 
 
 def current_track(session, room):
+    """Return the room's currently cached track, as long as it should still
+    be playing.
+    """
     if not room.current_track_id:
         return None
 
@@ -327,33 +332,112 @@ def choose_next_track(session, room):
     return track
 
 
-def get_current_room_track(room_id):
+def acquire_queue_lock(room_id, user_id):
+    """This is stupid.  We use integrity constraints on the RoomQueueLock
+    table to enforce what is basically an application lock.
+
+    Any request to /activity can trigger a queue update.  In that sense
+    any request from a client is a potential "master."  This lock allows one
+    of these  requests to obtain temporary ownership of the queue.
+
+    In a real production system we'd use SELECT FOR UPDATE using innodb,
+    or zookeeper, or something else entirely.  SQLite doesn't support
+    SELECT FOR UPDATE.
+
+    Will return True if lock was acquired; False if not.  Caller should
+    wait a little before trying again, if it even has to try again.
     """
+    log_context = dict(action='acquire_queue_lock', room_id=room_id, user_id=user_id)
+    with db.session_context() as session:
+        try:
+            lock = RoomQueueLock(room_id=room_id)
+            session.add(lock)
+            session.flush()
+            log.info("acquired - %s", log_context)
+            return True  # we got it
+        except IntegrityError:
+            log.info("already locked - %s", log_context)
+            session.rollback()
+
+        lock = session.query(RoomQueueLock).filter(RoomQueueLock.room_id == room_id).first()
+        if not lock:
+            log.info("recently freed - %s", log_context)
+            return False  # try again if we still need it
+
+        current_time = datetime.datetime.now()
+        if (current_time - lock.time_created).total_seconds() > QUEUE_LOCK_TIMEOUT:
+            # assume the request that took the lock fucked up, and remove it
+            session.query(RoomQueueLock).filter(RoomQueueLock.room_id == room_id).delete()
+            log.info("deleted - %s", log_context)
+
+        return False  # try again if we still need it
+
+
+def release_queue_lock(room_id, user_id):
+    log_context = dict(action='release_queue_lock', room_id=room_id, user_id=user_id)
+    with db.session_context() as session:
+        session.query(RoomQueueLock).filter(RoomQueueLock.room_id == room_id).delete()
+        log.info("released - %s", log_context)
+
+
+def assign_new_room_track(session, room, user_id):
+    log_context = dict(action='assign_new_room_track', room_id=room.id, user_id=user_id)
+    track = None
+    queue_populated = _rotate_queue(session, room)
+    if queue_populated:
+        # can only get next track if queue is valid
+        track = choose_next_track(session, room)
+    if track:
+        log.info("new track:%s user:%s %s %s", track.id, track.user_id, track.name, log_context)
+        room.current_track_id = track.id
+        room.current_user_id = track.user_id
+        room.time_track_started = datetime.datetime.now()
+    else:
+        room.current_track_id = None
+        room.current_user_id = None
+        room.time_track_started = None
+        log.info("no track %s", log_context)
+    return track
+
+
+def get_current_room_track(room_id, user_id):
+    """
+    Get the current track for the room.
+
+    Note that this function can potentially change the room's current
+    track, if the track is finished.
+
     :rtype: Track
     """
-    log_context = dict(action='get_current_room_track', room_id=room_id)
-    with db.session_context() as session:
-        # this select for update isn't gonna do shit.  as a result we have
-        # a race condition
-        room = _get_room(session, room_id, for_update=True)
-        track = current_track(session, room)
-        if track:
-            log.info("same track:%s user:%s %s %s", track.id, room.current_user_id, track.name, log_context)
-        else:
-            queue_populated = _rotate_queue(session, room)
-            if queue_populated:
-                # can only get next track if queue is valid
-                track = choose_next_track(session, room)
-            if track:
-                log.info("new track:%s user:%s %s %s", track.id, track.user_id, track.name, log_context)
-                room.current_track_id = track.id
-                room.current_user_id = track.user_id
-                room.time_track_started = datetime.datetime.now()
-            else:
-                room.current_track_id = None
-                room.current_user_id = None
-                room.time_track_started = None
-                log.info("no track %s", log_context)
+    log_context = dict(action='get_current_room_track', room_id=room_id, user_id=user_id)
 
-    room.track = track
-    return room
+    while True:
+        with db.session_context() as session:
+            room = _get_room(session, room_id)
+            track = current_track(session, room)
+            if track:
+                log.info("same track:%s user:%s %s %s", track.id, room.current_user_id, track.name, log_context)
+                room.track = track
+                return room
+
+        lock_acquired = False
+        try:
+            lock_acquired = acquire_queue_lock(room_id, user_id)
+            if not lock_acquired:
+                # someone else probably assigned the next song
+                # so try our loop again.  this boots us back to
+                # looking for the cached track for the room, so
+                # we can hopefully avoid even entering this block again
+                log.info("trying again %s", log_context)
+                time.sleep(0.1)
+                continue
+
+            with db.session_context() as session:
+                room = _get_room(session, room_id)
+                track = assign_new_room_track(session, room, user_id)
+        finally:
+            if lock_acquired:
+                release_queue_lock(room.id, user_id)
+
+        room.track = track
+        return room
