@@ -193,25 +193,34 @@ def _add_user_to_queue(session, room_id, user_id):
     session.flush()
     return room_queue
 
+
 def join_queue(room_id, user_id):
+    log_context = dict(action='join_queue', room_id=room_id, user_id=user_id)
     with db.session_context() as session:
         if not _does_room_exist(session, room_id):
+            log.info("room does not exist %s", log_context)
             raise RoomNotFound()
         if not _is_user_in_room(session, room_id, user_id):
+            log.info("user not in room %s", log_context)
             raise UserNotInRoom()
 
         if _is_user_in_queue(session, room_id, user_id):
+            log.info("user already in queue %s", log_context)
             return False
 
         _add_user_to_queue(session, room_id, user_id)
+        log.info("added user to queue %s", log_context)
         return True
 
 
 def leave_queue(room_id, user_id):
+    log_context = dict(action='leave_queue', room_id=room_id, user_id=user_id)
     with db.session_context() as session:
         if not _does_room_exist(session, room_id):
+            log.info("room does not exist %s", log_context)
             raise RoomNotFound()
         if not _is_user_in_room(session, room_id, user_id):
+            log.info("user not in room %s", log_context)
             raise UserNotInRoom()
 
         rows_deleted = session.query(
@@ -221,6 +230,10 @@ def leave_queue(room_id, user_id):
             RoomQueue.room_id == room_id,
         ).delete()
 
+        log.info("removed user from queue %s", log_context)
+
+        # TODO: skip current song if user is playing?
+
         return bool(rows_deleted)
 
 
@@ -228,12 +241,18 @@ def current_track(session, room):
     if not room.current_track_id:
         return None
 
+    log_context = dict(action='current_track', room_id=room.id, track_id=room.current_track_id)
     current_time = datetime.datetime.now()
     track = track_logic.load_track_by_id(session, room.current_track_id)
+    if track is None:
+        log.error("could not find track %s", log_context)
+        return None
+
+    log_context.update(dict(track_name=track.name))
 
     time_elapsed = current_time - room.time_track_started
     if time_elapsed.total_seconds() > TRACK_MAX_PLAYTIME:
-        log.info("ending playback of track %s early due to time_elapsed:%s", track.name, time_elapsed)
+        log.info("ending playback of track early due to time_elapsed:%s %s", time_elapsed, log_context)
         return None
 
     time_track_finished = room.time_track_started + datetime.timedelta(
@@ -242,7 +261,7 @@ def current_track(session, room):
 
     if current_time > time_track_finished:
         # track's done, so it's now stale
-        log.info("track %s is done", track.name)
+        log.info("track was done at time_track_finished:%s %s", time_track_finished, log_context)
         return None
 
     return track
@@ -267,13 +286,14 @@ def _rotate_queue(session, room):
 
     if there are no users, return False.
     """
+    log_context = dict(action='rotate_queue', room_id=room.id)
     queue_entry = _first_queue_entry(session, room)
     if queue_entry is None:
-        log.info("rotate_queue: empty")
+        log.info("empty queue %s", log_context)
         return False
 
     user_id = queue_entry.user_id
-    log.info("rotate_queue: moving user:%s to end of queue", user_id)
+    log.info("moving user:%s to end of queue %s", user_id, log_context)
     session.delete(queue_entry)
     session.flush()
 
@@ -284,6 +304,8 @@ def _rotate_queue(session, room):
 
 
 def choose_next_track(session, room):
+    log_context = dict(action='choose_next_track', room_id=room.id)
+
     # pick next user from queue
     # TODO: check that user's last ping is decent
     queue_entry = _first_queue_entry(session, room)
@@ -295,7 +317,7 @@ def choose_next_track(session, room):
     track = playlist_logic._get_next_track(session, user_id, playlist_id)
     if track is None:
         # this guy has no right to be DJing
-        log.info("removing user:%s from queue due to no track", user_id)
+        log.info("removing user:%s from queue due to no track %s", user_id, log_context)
         session.delete(queue_entry)
         session.flush()
         return choose_next_track(session, room)
@@ -308,18 +330,19 @@ def get_current_room_track(room_id):
     """
     :rtype: Track
     """
+    log_context = dict(action='get_current_room_track', room_id=room_id)
     with db.session_context() as session:
         room = _get_room(session, room_id, for_update=True)
         track = current_track(session, room)
         if track:
-            log.info("get_current_room_track: same track %s", track.name)
+            log.info("same track:%s user:%s %s %s", track.id, room.current_user_id, track.name, log_context)
         else:
             queue_populated = _rotate_queue(session, room)
             if queue_populated:
                 # can only get next track if queue is valid
                 track = choose_next_track(session, room)
             if track:
-                log.info("get_current_room_track: new track %s, user %s", track.name, track.user_id)
+                log.info("new track:%s user:%s %s %s", track.id, track.user_id, track.name, log_context)
                 room.current_track_id = track.id
                 room.current_user_id = track.user_id
                 room.time_track_started = datetime.datetime.now()
@@ -327,7 +350,7 @@ def get_current_room_track(room_id):
                 room.current_track_id = None
                 room.current_user_id = None
                 room.time_track_started = None
-                log.info("get_current_room_track: no track")
+                log.info("no track %s", log_context)
 
     room.track = track
     return room
